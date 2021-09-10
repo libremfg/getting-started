@@ -23,7 +23,7 @@
     ]
   },
   "libreDataStoreGraphQL" : {
-    "GRAPHQL_URL": "http://host.docker.internal:4000/graphql"
+    "GRAPHQL_URL": "http://alpha:8080/graphql"
   },
   "pubSubConnectorMQTT" : {
     "MQTT_SERVER":   "mqtt://mqtt:1883",

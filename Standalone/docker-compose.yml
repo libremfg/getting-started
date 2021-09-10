@@ -39,8 +39,8 @@ services:
     ports:
       - 80:80
     environment:
-      - AUTH0_DOMAIN=dev-libremfg.us.auth0.com
-      - AUTH0_CLIENT_ID=JaLWSmq1Vr3g31rEyeeqgGpW31dukwvI
+      - AUTH0_DOMAIN=demo-libremfg.us.auth0.com
+      - AUTH0_CLIENT_ID=cEye379jRD9TCroW6LRwsNf7LQkMYOBj
       - GRAPHQL_ENDPOINT=http://localhost:4000/graphql
       - GRAPHQL_SUBSCRIPTION_ENDPOINT=ws://localhost:8080/graphql
       - MQTT_USERNAME=admin
@@ -60,26 +60,25 @@ services:
       - 18083:18083
     restart: always
     container_name: mqtt
-#  libre-server:
-#    image: ghcr.io/spruik/libre-server:latest
-#    ports:
-#      - 4001:80
-#    environment:
-#      - LIBRE_CONFIG_FILE=/etc/config/config.json
-#      - LIBRE_DQL_URL= alpha:9080
-#      - LIBRE_GRAPHQL_ENDPOINT= http://alpha:8080/graphql
-#      - INFLUX_TOKEN= mytokenmytokenmytoken
-#      - INFLUX_ORG= Libre
-#      - INFLUX_BUCKET= Libre
-#      - INFLUX_URL= http://influxdb:8086
-#    volumes:
-#      - ./libre-server/config:/etc/config
-#    depends_on:
-#      - "influxdb"
-#      - "mqtt"
-#      - "alpha"
-#      - "zero"
-#    container_name: libre-server
+  libre-server:
+    image: ghcr.io/spruik/libre-server:Latest
+    ports:
+      - 4001:80
+    environment:
+      - LIBRE_DQL_URL=alpha:9080
+      - LIBRE_GRAPHQL_ENDPOINT=http://alpha:8080/graphql
+      - INFLUX_TOKEN=mytokenmytokenmytoken
+      - INFLUX_ORG=Libre
+      - INFLUX_BUCKET=Libre
+      - INFLUX_URL=http://influxdb:8086
+    volumes:
+      - ./libre-server/config:/etc/config
+    depends_on:
+      - "influxdb"
+      - "mqtt"
+      - "alpha"
+      - "zero"
+    container_name: libre-server
   libre-core:
     image: ghcr.io/spruik/libre-core:0.2.0
     environment:
@@ -89,6 +88,8 @@ services:
     depends_on:
       - "influxdb"
       - "mqtt"
+      - "zero"
+      - "alpha"
     container_name: libre-core
   graphql-pubsub:
     image: ghcr.io/spruik/graphql-pubsub:0.0.2
@@ -99,6 +100,8 @@ services:
     depends_on:
       - "influxdb"
       - "mqtt"
+      - "zero"
+      - "alpha"
     container_name: graphql-pubsub
   libre-workflow-pubsub:
     image: ghcr.io/spruik/libre-workflow-pubsub:0.0.1
@@ -110,6 +113,8 @@ services:
       - "influxdb"
       - "mqtt"
       - "graphql-pubsub"
+      - "zero"
+      - "alpha"
     container_name: libre-workflow-pubsub
   influxdb:
     image: influxdb:2.0.7
@@ -129,6 +134,7 @@ services:
     container_name: influxdb
   bathurst-packaging-line1:
     image: spruiktec/packml-simulator
+    restart: always
     environment:
       SITE: PACKML
       AREA: SIM
@@ -141,3 +147,16 @@ services:
     depends_on:
       - "influxdb"
       - "mqtt"
+  libre-gateway:
+    ports:
+      - 4000:4000
+    image: ghcr.io/spruik/libre-gateway:tom
+    restart: always
+    container_name: libre-gateway
+    environment:
+      - GRAPHQL_ENDPOINT=http://alpha:8080
+      - LIBRE_SERVER_ENDPOINT=http://libre-server
+      - LIBRE_AUTH_CERT_URL=https://demo-libremfg.us.auth0.com/.well-known/jwks.json
+    depends_on:
+      - "alpha"
+      - "libre-server"
