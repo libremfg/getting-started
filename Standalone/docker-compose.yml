@@ -160,3 +160,20 @@ services:
     depends_on:
       - "alpha"
       - "libre-server"
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: always
+    environment:
+      - GF_INSTALL_PLUGINS=fifemon-graphql-datasource,marcusolsson-gantt-panel,isaozler-paretochart-panel,michaeldmoore-multistat-panel
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/plugins:/var/lib/grafana/plugins
+      - ./grafana/data:/var/lib/grafana
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+    depends_on:
+      - "mqtt"
+      - "alpha"
+      - "influxdb"

@@ -1,0 +1,30 @@
+{
+  "type": "panel",
+  "name": "Pareto Chart",
+  "id": "isaozler-paretochart-panel",
+  "info": {
+    "description": "Pareto Chart for Grafana",
+    "author": {
+      "name": "Isa Ozler",
+      "url": "https://isaozler.com",
+      "email": "contactme@isaozler.com"
+    },
+    "keywords": ["grafana", "pareto", "chart"],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [],
+    "screenshots": [
+      { "name": "Pareto Chart Dashboard Impression", "path": "img/production-env--impression.jpg" },
+      { "name": "Pareto Chart Edit Dashboard", "path": "img/pareto-chart-edit-panel.jpg" }
+    ],
+    "version": "0.3.1",
+    "updated": "2020-10-22"
+  },
+  "dependencies": {
+    "grafanaDependency": ">=7.0.0",
+    "grafanaVersion": "7.x",
+    "plugins": []
+  }
+}

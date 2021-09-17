@@ -1,0 +1,41 @@
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+{
+  "manifestVersion": "2.0.0",
+  "signatureType": "community",
+  "signedByOrg": "michaeldmoore",
+  "signedByOrgName": "michaeldmoore",
+  "plugin": "michaeldmoore-multistat-panel",
+  "version": "1.7.2",
+  "time": 1619000406798,
+  "keyId": "7e4d0c6a708866e7",
+  "files": {
+    "module.js": "7a5f3a8963055bade122b529e257a609c16f658ed1323aba571bcff7c067516a",
+    "layout.html": "3a9387a752f8ef9cc90d67754c2d864ae466e2ad0b094fdf42b1673835891cc6",
+    "img/Showcase.gif": "21d41346060757cdf72bbacfb69a6e0f19df71cd3865e9e2e92a57c637da03be",
+    "img/michaeldmoore-multistat-panel.svg": "c38ae1188adf61615267773940547de3ad819534b8c8a0789ddf660674c258aa",
+    "grouping.html": "54fe93f6bfb5ed76eebe601d61cf838e14011858994401e74decbad0c36ee342",
+    "module.js.map": "65e106432995c3f01e9d78cd4a847ce71fa018359cec5016697ed34d21bc2aaf",
+    "plugin.json": "c7cc007dce0e550110dbcccb14eb2e21999d0a0af3260c540264aaef1de7017d",
+    "README.md": "30b299bfa7957b8816fab76efe7203cf9edcc19463b4c638465d76f4eb24cd60",
+    "module.html": "cd9dbc8949fd1941f80005892e3d22da22b4fa4e56a2e8da2091e3f4acee3a3f",
+    "options.html": "b1b9dd3bcbc7b64a03a25695cbaba568e170ab3ef61fafdf2830162ef50afb04",
+    "columns.html": "fb0a6a9027f7d954f90c068df3774f321712c0af6a93904bf236794a91cfd93f",
+    "barlinks.html": "d6ee971a5d41cd7a3c7e7bef79998a55af8744da093fdf14a6c28454f14af241",
+    "CHANGELOG.md": "81ba8ce20a5d95465fcdbdb7cdeb981ad2b0664fd79c6dce0eeae348ce3dd585",
+    "css/multistat-panel.css": "34f4d96627d86e779276e368e437be3eab21ae75004dafcd75659391052b4baa",
+    "linesandlimits.html": "f2ee12bdfe3175f84de1ba314644b8cafa0e24a383985f760e9c6198b4efa260"
+  }
+}
+-----BEGIN PGP SIGNATURE-----
+Version: OpenPGP.js v4.10.1
+Comment: https://openpgpjs.org
+
+wqIEARMKAAYFAmB//FcACgkQfk0ManCIZucEOgIJAYL+Pdb9IttDuX/rCi94
+MNDcOeydEBQedIqvq8pBZUO6frzZNEfmgLySl8+CIWKWAG92+lIwKILECus2
+h1M6+jj+AgkBWv9+kCXqGOOJa5c26aFGocCXYyJg+w6bHqiWzUnBZVVPvsQH
+3FOUCnSIWugU63VNjgT7VlC25awDLSUpgFKk1q4=
+=qugQ
+-----END PGP SIGNATURE-----

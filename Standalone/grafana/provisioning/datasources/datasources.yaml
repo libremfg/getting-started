@@ -1,0 +1,46 @@
+datasources:
+  - name: Historian
+    type: influxdb
+    typeLogoUrl: public/app/plugins/datasource/influxdb/img/influxdb_logo.svg
+    access: proxy
+    url: http://influxdb:8086
+    basicAuth: true
+    isDefault: false
+    readOnly: false
+    editable: true
+    secureJsonData:
+      token: mytokenmytokenmytoken
+    jsonData: 
+      defaultBucket: Libre
+      organization: Libre
+      httpMode: POST
+      version: Flux
+      tlsSkipVerify: true
+  - name: MKG
+    type: fifemon-graphql-datasource
+    typeName: GraphQL Data Source
+    typeLogoUrl: public/plugins/fifemon-graphql-datasource/img/logo.svg
+    access: proxy
+    url: http://libre-gateway:4000/graphql
+    password: 
+    user: 
+    database: 
+    basicAuth: false
+    isDefault: true
+    jsonData: 
+      oauthPassThru: true
+    readOnly: false
+    editable: true
+  - name: MQTT
+    type: grafana-mqtt-datasource
+    typeName: MQTT
+    typeLogoUrl: public/plugins/grafana-mqtt-datasource/img/mqtt.svg
+    access: proxy
+    secureJsonData:
+      password: public
+    jsonData:
+      host: mqtt
+      port: 1883
+      username: admin
+    readOnly: false
+    editable: true
