@@ -25,6 +25,5 @@ If you would like to use Libre in a production environment, please get in touch 
 * libre-workflow-pubsub microservice
 * libre-gateway
 
-
-
+## INSTALLATION ##
 
