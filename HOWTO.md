@@ -9,6 +9,20 @@ If you would like to use Libre in a production environment, please get in touch 
 ## Libre Admin
 Found at http://localhost
 
+Libre admin is the primary component of Libre core, it is the centrepoint of all user driven activity.
+
+Every time you login you should be greeted with an empty screen
+![image](https://user-images.githubusercontent.com/54924665/134123473-e5596b30-4844-493f-850a-39c4b5c5ccab.png)
+
+You can access the menu by clicking the top left hand corner of the screen, and configure it through Security -> Menu Config
+![image](https://user-images.githubusercontent.com/54924665/134130952-0ec4c3a9-2236-4d78-803c-c775123f2412.png)
+
+You can add new pages by clicking the + next to Menu Configuration Panel
+
+![image](https://user-images.githubusercontent.com/54924665/134133992-72934de6-6796-4e15-a59a-6077897d6d4d.png)
+
+If you click the checkbox Is Page, the drop down menu Menu Page will appear where you can select the type of page to add
+
 ## Grafana
 Found at http://localhost:3000
 
