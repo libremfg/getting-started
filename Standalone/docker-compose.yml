@@ -155,6 +155,10 @@ services:
       - GRAPHQL_ENDPOINT=http://alpha:8080
       - LIBRE_SERVER_ENDPOINT=http://libre-server
       - LIBRE_AUTH_CERT_URL=https://demo-libremfg.us.auth0.com/.well-known/jwks.json
+    volumes:
+      - type: bind
+        source: ./libre-gateway/supergraph.graphql
+        target: /app/supergraph.graphql
     depends_on:
       - "alpha"
       - "libre-server"
