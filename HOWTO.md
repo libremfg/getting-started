@@ -12,7 +12,10 @@ Found at http://localhost
 Libre admin is the primary component of Libre core, it is the centrepoint of all user driven activity.
 
 Every time you login you should be greeted with an empty screen
+
 ![image](https://user-images.githubusercontent.com/54924665/134123473-e5596b30-4844-493f-850a-39c4b5c5ccab.png)
+
+### Configuring the menu
 
 You can access the menu by clicking the top left hand corner of the screen, and configure it through Security -> Menu Config
 ![image](https://user-images.githubusercontent.com/54924665/134130952-0ec4c3a9-2236-4d78-803c-c775123f2412.png)
