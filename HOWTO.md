@@ -48,6 +48,22 @@ In the properties tab you can set up properties for the class. Click the + next 
 
 ![image](https://user-images.githubusercontent.com/54924665/134270460-b777f581-07ba-4742-8259-0bf59b3b3ec6.png)
 
+In the events tab, you set up triggers for Libre to record various states of the equipment.
+
+![image](https://user-images.githubusercontent.com/54924665/134272075-28ca16f2-0b88-4acb-b1d0-0d5fadc9da27.png)
+Breaking down this image we have a few different fields
+  1. Event Name - the name of the event being established
+  2. Message Class - specifies the type of event. Here we use PerformanceLog as it is a measurement of the run rate of the machine
+  3. Trigger Property - the property that causes the data to be written
+  4. Trigger expression - the trigger that causes the data to be written.
+    * The example provided here means that the edge will be monitoring the Rate property of any connected equipment, and when the Rate > 1, will trigger the expression
+  5. Field properties - configures the fields that get written to the database
+    * This can be properties and/or user defined fields
+
+In the reasons tab you can add downtime reasons similarly to how you would add properties. Once you add a reason, whenever you add another reason you can assign it as a parent reason as follows
+![image](https://user-images.githubusercontent.com/54924665/134272914-645fbfb7-3cbd-4272-b658-8f8886f8fbd7.png)
+Here, the reason we are creating would have Lunch as its parent.
+
 
 ## Grafana
 Found at http://localhost:3000
