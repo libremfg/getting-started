@@ -25,6 +25,21 @@ If you would like to use Libre in a production environment, please get in touch 
 * libre-workflow-pubsub microservice
 * libre-gateway
 
-
-
-
+## INSTALLATION ##
+1. Download this repository
+  ![image](https://user-images.githubusercontent.com/54924665/133958186-de997f1e-a50a-4c7e-a066-317bfa85110f.png)
+  * If you download the ZIP, make sure to unzip it and move it to your preferred location
+2. Install docker
+  * Windows: 
+    * https://docs.docker.com/desktop/windows/install/
+    * https://docs.microsoft.com/en-gb/windows/wsl/install-win10#step-4---download-the-linux-kernel-update-package (steps 1-5)
+  * Mac: https://docs.docker.com/desktop/mac/install/
+  * Linux: https://docs.docker.com/engine/install/
+3. Run docker service
+  * Navigate to your local installation on a terminal
+  * Navigate to getting-started/standalone
+  * Run the command: docker compose up
+4. Create an account for the demo
+  * Go to http://localhost
+  * Create an account via auth0
+  * Email support@libremfg.com to get your account authorised
