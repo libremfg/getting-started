@@ -15,7 +15,7 @@ Every time you login you should be greeted with an empty screen
 
 ![image](https://user-images.githubusercontent.com/54924665/134123473-e5596b30-4844-493f-850a-39c4b5c5ccab.png)
 
-### Configuring the menu
+### Configuring the Menu
 
 You can access the menu by clicking the top left hand corner of the screen, and configure it through Security -> Menu Config
 ![image](https://user-images.githubusercontent.com/54924665/134130952-0ec4c3a9-2236-4d78-803c-c775123f2412.png)
@@ -30,7 +30,20 @@ If you click the checkbox Is Page, the drop down menu Menu Page will appear wher
 
 From the menu configuration panel, you can also drag and drop pages or sections around
 
-### Setting up an equipment class
+### Setting up a Unit of Measure
+
+Navigate to Configuration -> Units of Measure
+
+To create a unit of measure, click the + next to the search bar
+
+![image](https://user-images.githubusercontent.com/54924665/134277416-f8463130-ae81-477b-85c7-08db54bcaf9f.png)
+
+Set up some variables of your choice and press save
+
+![image](https://user-images.githubusercontent.com/54924665/134277468-bedd99aa-422e-4b1f-9d76-717bf59e4054.png)
+
+
+### Setting up an Equipment Class
 
 Navigate to Configuration -> Equipment Classes
 
@@ -66,15 +79,38 @@ In the reasons tab you can add downtime reasons similarly to how you would add p
 
 Here, the reason we are creating would have Lunch as its parent.
 
+### Setting up an Equipment
+
+Navigate to Configuration -> Equipment
+
+You can add an equipment similarly to the menu config or equipment classes page
+
+![image](https://user-images.githubusercontent.com/54924665/134277593-3debc2d6-ac66-4872-9e0a-bf01ddfdd8cc.png)
+
+Set up all the variables for the equipment and click add
+
+![image](https://user-images.githubusercontent.com/54924665/134277730-464ac927-d8d0-4ef5-9f3e-10e15df96f94.png)
+
+An equipment will inherit all properties and reasons from its equipment class, and you can create new ones specifically for that equipment simiarly to how you would do it in equipment classes
+
+
 
 ## Grafana
 Found at http://localhost:3000
 
+A sample grafana dashboard to visualise some sample data in the influx database
+
 ## GraphQL Playground
 Found at http://localhost:4000/graphql
+
+Here is a graphql endpoint that allows you to talk directly with the primary database and see the structure of the schema. Note that this will be disabled in a production environment.
 
 ## Influx
 Found at http://localhost:8086
 
+Here is an endpoint that allows you to directly interact with the influx database where the events described in the equipment class are stored.
+
 ## EMQX Broker
 Found at http://localhost:18083
+
+Enables you track all the MQTT connections in the service
