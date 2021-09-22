@@ -26,6 +26,29 @@ You can add new pages by clicking the + next to Menu Configuration Panel
 
 If you click the checkbox Is Page, the drop down menu Menu Page will appear where you can select the type of page to add
 
+![image](https://user-images.githubusercontent.com/54924665/134267117-a2f97532-b74e-4f1f-8dde-c469200908b5.png)
+
+From the menu configuration panel, you can also drag and drop pages or sections around
+
+### Setting up an equipment class
+
+Navigate to Configuration -> Equipment Classes
+
+You should be able to see some preconfigured examples, and you can create a new one by clicking the + 
+
+![image](https://user-images.githubusercontent.com/54924665/134268966-85c331d8-f0d9-4755-80b2-40680b8d13fe.png)
+
+You can configure the various aspects of the equipment class through the top toolbar
+
+![image](https://user-images.githubusercontent.com/54924665/134269843-ceb69289-51a9-4e13-b975-72f581a77dde.png)
+
+In the general tab you can edit the name an description of the class
+
+In the properties tab you can set up properties for the class. Click the + next to the search bar to start writing a new property and press save when you're done
+
+![image](https://user-images.githubusercontent.com/54924665/134270460-b777f581-07ba-4742-8259-0bf59b3b3ec6.png)
+
+
 ## Grafana
 Found at http://localhost:3000
 
