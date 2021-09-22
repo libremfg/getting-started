@@ -39,3 +39,7 @@ If you would like to use Libre in a production environment, please get in touch 
   * Navigate to your local installation on a terminal
   * Navigate to getting-started/standalone
   * Run the command: docker compose up
+4. Create an account for the demo
+  * Go to http://localhost
+  * Create an account via auth0
+  * Email support@libremfg.com to get your account authorised
