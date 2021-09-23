@@ -24,8 +24,8 @@ services:
     ports:
       - 8080:8080
       - 9080:9080
-    env_file:
-      - ACCESS_KEYS.txt
+#    env_file:
+#      - ACCESS_KEYS.txt
     restart: on-failure
     command: dgraph alpha --my=alpha:7080 --zero=zero:5080  --security whitelist=0.0.0.0/0
     container_name: alpha
