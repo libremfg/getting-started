@@ -97,7 +97,7 @@ services:
       - "alpha"
     container_name: libre-core
   graphql-pubsub:
-    image: ghcr.io/spruik/graphql-pubsub:0.0.2
+    image: ghcr.io/spruik/graphql-pubsub:0.0.3
     environment:
       - LIBRE_CONFIG_FILE=/etc/config/config.json
     volumes:
