@@ -1,0 +1,79 @@
+{
+  "libreLogger" : {
+    "defaultLevel": "DEBUG",
+    "defaultDestination": "CONSOLE",
+    "loggers": [
+      {"MAIN": {"topic":"MAIN"}},
+      {"SERVER": {"topic":"SERVER"}},
+      {"EQUIPMENT" : {"topic": "EQUIPMENT"}},
+      {"PubSubMQTT" : {"topic": "PubSubMQTT"}},
+      {"PlcConnectorMQTT" : {"topic": "PLCMQTT"}},
+      {"graphQLTrans" : {"topic": "GQLTRANS"}},
+      {"RESTAPI": {"topic":"RESTAPI"}},
+      {"DEFAULT": {"topic": "DEFAULT"}},
+      {"EquipmentManager": {"topic":"EQMGR"}},
+      {"ManagedEquipmentDaemon": {"topic":"MGDEQD"}},
+      {"PlcConnectorMQTT" : {"topic": "PLCMQTT"}},
+      {"tagChangeHandlerFactory" : {"topic": "THFACT"}},
+      {"managedEquipmentDefault" : {"topic": "MGDEQ"}},
+      {"DATAGQL": {"topic":"DATAGQL"}},
+      {"EQFINDR": {"topic":"EQFINDR"}},
+      {"EQCACHE": {"topic":"EQCACHE"}},
+      {"EdgeService": {"topic":"EdgeService"}},
+      {"valueChangeFilterFactory": {"topic":"ValChng"}},
+      {"": {"topic":"DEFAULT", "level": "INFO"}}
+    ]
+  },
+  "PubSubConnectorMQTT" : {
+    "MQTT_SERVER":   "mqtt://mqtt:1883",
+    "MQTT_USER":     "admin",
+    "MQTT_PWD":      "public",
+    "MQTT_SVC_NAME": "libre-edge-agent-pubsub-gn"
+  },
+  "PlcConnectorOPCUA" : {
+    "ENDPOINT": "opc.tcp://127.0.0.1:58018/NodeOPCUA-Server",
+    "aliasSystem": "OPCUA",
+    "OVERRIDE_ENDPOINTURL": "opc.tcp://127.0.0.1:58018/NodeOPCUA-Server"
+  },
+  "PlcConnectorMQTT" : {
+    "MQTT_SERVER":   "mqtt://mqtt:1883",
+    "MQTT_USER":     "admin",
+    "MQTT_PWD":      "public",
+    "MQTT_SVC_NAME": "PlcToEdgeAgent",
+    "TOPIC_TEMPLATES": [
+      "<EQNAME>/Status/<TAGNAME>",
+      "<EQNAME>/Status/Parameter/<PARAMNUM>/<PARAMITEM>",
+      "<EQNAME>/Status/Product/<PRODUCTNUM>/ProcessParameter/<PROCPARAMNUM>/<PROCPARAMITEM>",
+      "<EQNAME>/Status/Product/<PRODUCTNUM>/Ingredient/<INGREDIENTNUM>/<INGREDIENTITEM>",
+      "<EQNAME>/Status/Product/<PRODUCTNUM>/Ingredient/<INGREDIENTNUM>/Parameter/<INGPARAMNUM>/<INGPARAMITEM>",
+      "<EQNAME>/Admin/<TAGNAME>",
+      "<EQNAME>/Admin/ProdConsumedCount/<PRODCONSCNT>/<PRODCONSITEM>",
+      "<EQNAME>/Admin/ProdProcessedCount/<PRODPROCCNT>/<PRODPROCITEM>",
+      "<EQNAME>/Admin/ProdDefectiveCount/<PRODDFCTCNT>/<PRODDFCTITEM>"
+    ]
+  },
+  "EdgeConnectorMQTT" : {
+    "MQTT_SERVER":   "mqtt://mqtt:1883",
+    "MQTT_USER":     "admin",
+    "MQTT_PWD":      "public",
+    "MQTT_SVC_NAME": "libre-edge-agent-edgeConnector-gn",
+    "TOPIC_TEMPLATE": "<EQNAME>/<CATEGORY>/<TAGNAME>",
+    "TAG_DATA_CATEGORY": "EdgeTagChange",
+    "EVENT_CATEGORY": "EdgeEvent"
+  },
+  "RESTAPI": {
+    "PORT" : "28080"
+  },
+  "EdgeService": {
+    "PLC_CONNECTORS": [
+      "MQTT"
+    ]
+  },
+  "edge": {
+    "loggerHook": "daemon",
+    "commandWaitDuration": "500ms"
+  },
+  "eventDefEvaluator": {
+    "EventPayloadDelayMilliseconds": "5s"
+  }
+}

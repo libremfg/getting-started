@@ -753,6 +753,8 @@ type SegmentDependency @withSubscription @key(fields:"id"){
 enum DependencyType {
     StartAfterStart
     StartAfterEnd
+    EndAfterEnd
+    EndAfterStart
     CanRunParallel
     CannotRunParallel
 }
@@ -823,7 +825,9 @@ type JobOrder @withSubscription @key(fields:"id"){
     operationsRequest:OperationsRequest @hasInverse(field:jobOrders)
     operationsSegment:OperationsSegment @hasInverse(field:jobOrders)
     jobResponses:[JobResponse] @hasInverse(field:jobOrder)
+    jobOrderNotes:[JobOrderNote] @hasInverse(field:jobOrder)
 }
+
 enum DispatchStatus{
     PENDING
     ACTIVE
@@ -831,6 +835,18 @@ enum DispatchStatus{
     COMPLETE
     CLOSED
 }
+
+type JobOrderNote {
+    id:ID!
+    comment:String
+    createdDateTime:DateTime
+    editedDateTime:DateTime
+    createdBy:User
+    modifiedBy:User
+    isActive:Boolean
+    jobOrder:JobOrder @hasInverse(field:jobOrderNotes)
+}
+
 type JobResponse @withSubscription @key(fields:"id"){
     id:ID!
     isActive:Boolean @search
@@ -1176,6 +1192,8 @@ type EventDefinition @withSubscription @key(fields:"id"){
     messageClass: MessageClass!
     triggerProperties:[Property]
     triggerExpression:String!
+    delayOption: Boolean
+    delayTime: Int
     payloadProperties:[Property]
     payloadFields:[PayloadFieldDefinition]
     orderStartRuleset:OrderStartRuleset @hasInverse(field:eventDefs)

@@ -886,6 +886,8 @@ input AddEventDefinitionInput {
   messageClass: MessageClass!
   triggerProperties: [PropertyRef]
   triggerExpression: String!
+  delayOption: Boolean
+  delayTime: Int
   payloadProperties: [PropertyRef]
   payloadFields: [PayloadFieldDefinitionRef]
   orderStartRuleset: OrderStartRulesetRef
@@ -1027,6 +1029,22 @@ input AddJobOrderInput {
   operationsRequest: OperationsRequestRef
   operationsSegment: OperationsSegmentRef
   jobResponses: [JobResponseRef]
+  jobOrderNotes: [JobOrderNoteRef]
+}
+
+input AddJobOrderNoteInput {
+  comment: String
+  createdDateTime: DateTime
+  editedDateTime: DateTime
+  createdBy: UserRef
+  modifiedBy: UserRef
+  isActive: Boolean
+  jobOrder: JobOrderRef
+}
+
+type AddJobOrderNotePayload {
+  jobOrderNote(filter: JobOrderNoteFilter, order: JobOrderNoteOrder, first: Int, offset: Int): [JobOrderNote]
+  numUids: Int
 }
 
 type AddJobOrderPayload {
@@ -2243,6 +2261,11 @@ type AddWorkMasterPayload {
   numUids: Int
 }
 
+input AllEventsInTimeRangeFilter {
+  From: DateTime!
+  To: DateTime
+}
+
 type ASNStaging
   @join__owner(graph: CORE)
   @join__type(graph: CORE, key: "id")
@@ -2910,6 +2933,12 @@ type DeleteInventoryHandlingRulePayload {
 
 type DeleteInventoryTransactionPayload {
   inventoryTransaction(filter: InventoryTransactionFilter, order: InventoryTransactionOrder, first: Int, offset: Int): [InventoryTransaction]
+  msg: String
+  numUids: Int
+}
+
+type DeleteJobOrderNotePayload {
+  jobOrderNote(filter: JobOrderNoteFilter, order: JobOrderNoteOrder, first: Int, offset: Int): [JobOrderNote]
   msg: String
   numUids: Int
 }
@@ -4181,6 +4210,8 @@ type EventDefinition
   messageClass: MessageClass! @join__field(graph: CORE)
   triggerProperties(filter: PropertyFilter, order: PropertyOrder, first: Int, offset: Int): [Property] @join__field(graph: CORE)
   triggerExpression: String! @join__field(graph: CORE)
+  delayOption: Boolean @join__field(graph: CORE)
+  delayTime: Int @join__field(graph: CORE)
   payloadProperties(filter: PropertyFilter, order: PropertyOrder, first: Int, offset: Int): [Property] @join__field(graph: CORE)
   payloadFields(filter: PayloadFieldDefinitionFilter, order: PayloadFieldDefinitionOrder, first: Int, offset: Int): [PayloadFieldDefinition] @join__field(graph: CORE)
   orderStartRuleset(filter: OrderStartRulesetFilter): OrderStartRuleset @join__field(graph: CORE)
@@ -4199,6 +4230,10 @@ type EventDefinitionAggregateResult {
   nameMax: String
   triggerExpressionMin: String
   triggerExpressionMax: String
+  delayTimeMin: Int
+  delayTimeMax: Int
+  delayTimeSum: Int
+  delayTimeAvg: Float
 }
 
 input EventDefinitionFilter {
@@ -4217,6 +4252,8 @@ enum EventDefinitionHasFilter {
   messageClass
   triggerProperties
   triggerExpression
+  delayOption
+  delayTime
   payloadProperties
   payloadFields
   orderStartRuleset
@@ -4235,6 +4272,7 @@ input EventDefinitionOrder {
 enum EventDefinitionOrderable {
   name
   triggerExpression
+  delayTime
 }
 
 input EventDefinitionPatch {
@@ -4243,6 +4281,8 @@ input EventDefinitionPatch {
   messageClass: MessageClass
   triggerProperties: [PropertyRef]
   triggerExpression: String
+  delayOption: Boolean
+  delayTime: Int
   payloadProperties: [PropertyRef]
   payloadFields: [PayloadFieldDefinitionRef]
   orderStartRuleset: OrderStartRulesetRef
@@ -4259,6 +4299,8 @@ input EventDefinitionRef {
   messageClass: MessageClass
   triggerProperties: [PropertyRef]
   triggerExpression: String
+  delayOption: Boolean
+  delayTime: Int
   payloadProperties: [PropertyRef]
   payloadFields: [PayloadFieldDefinitionRef]
   orderStartRuleset: OrderStartRulesetRef
@@ -4437,11 +4479,11 @@ type EventsByField {
   reasonValueUoM: String
   packMLStatus: String
 
-  """An experimental type for error handling"""
-  inputError: InputError
+  """The id of the work calendar entry associated with this event"""
+  shiftId: String
 
-  """An experimental type for error handling"""
-  dataError: DataError
+  """The description of the work calendar entry associated with this event"""
+  shiftDescription: String
 }
 
 """the filter for an eventsByField query"""
@@ -4472,6 +4514,11 @@ input EventsByFieldFilter {
   If only from is specified, this value defaults to the current time
   """
   to: DateTime
+
+  """
+  when true, changes the start time of the first response in the event list to be the start of the job response,
+  or the filter's from field if the original time is earlier than the modified time
+  """
   interpolateAtRangeBoundary: Boolean
 
   """
@@ -4484,6 +4531,11 @@ input EventsByFieldFilter {
   records will only return if the field specified by this variable is null
   """
   returnUnassignedField: String
+
+  """
+  will associate and split events based on work calendar entries when set to true
+  """
+  provideShiftInformation: Boolean
 }
 
 """aggregated information about a group of events"""
@@ -5090,11 +5142,13 @@ type JobOrder
   operationsRequest(filter: OperationsRequestFilter): OperationsRequest @join__field(graph: CORE)
   operationsSegment(filter: OperationsSegmentFilter): OperationsSegment @join__field(graph: CORE)
   jobResponses(filter: JobResponseFilter, order: JobResponseOrder, first: Int, offset: Int): [JobResponse] @join__field(graph: CORE)
+  jobOrderNotes(filter: JobOrderNoteFilter, order: JobOrderNoteOrder, first: Int, offset: Int): [JobOrderNote] @join__field(graph: CORE)
   childrenAggregate(filter: JobOrderFilter): JobOrderAggregateResult @join__field(graph: CORE)
   materialSpecificationsAggregate(filter: MaterialSpecificationFilter): MaterialSpecificationAggregateResult @join__field(graph: CORE)
   equipmentSpecificationsAggregate(filter: EquipmentSpecificationFilter): EquipmentSpecificationAggregateResult @join__field(graph: CORE)
   personnelSpecificationsAggregate(filter: PersonnelSpecificationFilter): PersonnelSpecificationAggregateResult @join__field(graph: CORE)
   jobResponsesAggregate(filter: JobResponseFilter): JobResponseAggregateResult @join__field(graph: CORE)
+  jobOrderNotesAggregate(filter: JobOrderNoteFilter): JobOrderNoteAggregateResult @join__field(graph: CORE)
   lastEvent(filter: LastEventFilter): EventsByField @join__field(graph: PROFILES, requires: "scheduledStartDateTime")
 }
 
@@ -5180,6 +5234,79 @@ enum JobOrderHasFilter {
   operationsRequest
   operationsSegment
   jobResponses
+  jobOrderNotes
+}
+
+type JobOrderNote {
+  id: ID!
+  comment: String
+  createdDateTime: DateTime
+  editedDateTime: DateTime
+  createdBy(filter: UserFilter): User
+  modifiedBy(filter: UserFilter): User
+  isActive: Boolean
+  jobOrder(filter: JobOrderFilter): JobOrder
+}
+
+type JobOrderNoteAggregateResult {
+  count: Int
+  commentMin: String
+  commentMax: String
+  createdDateTimeMin: DateTime
+  createdDateTimeMax: DateTime
+  editedDateTimeMin: DateTime
+  editedDateTimeMax: DateTime
+}
+
+input JobOrderNoteFilter {
+  id: [ID!]
+  has: [JobOrderNoteHasFilter]
+  and: [JobOrderNoteFilter]
+  or: [JobOrderNoteFilter]
+  not: JobOrderNoteFilter
+}
+
+enum JobOrderNoteHasFilter {
+  comment
+  createdDateTime
+  editedDateTime
+  createdBy
+  modifiedBy
+  isActive
+  jobOrder
+}
+
+input JobOrderNoteOrder {
+  asc: JobOrderNoteOrderable
+  desc: JobOrderNoteOrderable
+  then: JobOrderNoteOrder
+}
+
+enum JobOrderNoteOrderable {
+  comment
+  createdDateTime
+  editedDateTime
+}
+
+input JobOrderNotePatch {
+  comment: String
+  createdDateTime: DateTime
+  editedDateTime: DateTime
+  createdBy: UserRef
+  modifiedBy: UserRef
+  isActive: Boolean
+  jobOrder: JobOrderRef
+}
+
+input JobOrderNoteRef {
+  id: ID
+  comment: String
+  createdDateTime: DateTime
+  editedDateTime: DateTime
+  createdBy: UserRef
+  modifiedBy: UserRef
+  isActive: Boolean
+  jobOrder: JobOrderRef
 }
 
 input JobOrderOrder {
@@ -5231,6 +5358,7 @@ input JobOrderPatch {
   operationsRequest: OperationsRequestRef
   operationsSegment: OperationsSegmentRef
   jobResponses: [JobResponseRef]
+  jobOrderNotes: [JobOrderNoteRef]
 }
 
 input JobOrderRef {
@@ -5263,6 +5391,7 @@ input JobOrderRef {
   operationsRequest: OperationsRequestRef
   operationsSegment: OperationsSegmentRef
   jobResponses: [JobResponseRef]
+  jobOrderNotes: [JobOrderNoteRef]
 }
 
 type JobResponse
@@ -6689,6 +6818,9 @@ type Mutation {
   addJobOrder(input: [AddJobOrderInput!]!, upsert: Boolean): AddJobOrderPayload @join__field(graph: CORE)
   updateJobOrder(input: UpdateJobOrderInput!): UpdateJobOrderPayload @join__field(graph: CORE)
   deleteJobOrder(filter: JobOrderFilter!): DeleteJobOrderPayload @join__field(graph: CORE)
+  addJobOrderNote(input: [AddJobOrderNoteInput!]!): AddJobOrderNotePayload @join__field(graph: CORE)
+  updateJobOrderNote(input: UpdateJobOrderNoteInput!): UpdateJobOrderNotePayload @join__field(graph: CORE)
+  deleteJobOrderNote(filter: JobOrderNoteFilter!): DeleteJobOrderNotePayload @join__field(graph: CORE)
   addJobResponse(input: [AddJobResponseInput!]!): AddJobResponsePayload @join__field(graph: CORE)
   updateJobResponse(input: UpdateJobResponseInput!): UpdateJobResponsePayload @join__field(graph: CORE)
   deleteJobResponse(filter: JobResponseFilter!): DeleteJobResponsePayload @join__field(graph: CORE)
@@ -8672,6 +8804,9 @@ type Query {
   getJobOrder(id: ID, name: String): JobOrder @join__field(graph: CORE)
   queryJobOrder(filter: JobOrderFilter, order: JobOrderOrder, first: Int, offset: Int): [JobOrder] @join__field(graph: CORE)
   aggregateJobOrder(filter: JobOrderFilter): JobOrderAggregateResult @join__field(graph: CORE)
+  getJobOrderNote(id: ID!): JobOrderNote @join__field(graph: CORE)
+  queryJobOrderNote(filter: JobOrderNoteFilter, order: JobOrderNoteOrder, first: Int, offset: Int): [JobOrderNote] @join__field(graph: CORE)
+  aggregateJobOrderNote(filter: JobOrderNoteFilter): JobOrderNoteAggregateResult @join__field(graph: CORE)
   getJobResponse(id: ID!): JobResponse @join__field(graph: CORE)
   queryJobResponse(filter: JobResponseFilter, order: JobResponseOrder, first: Int, offset: Int): [JobResponse] @join__field(graph: CORE)
   aggregateJobResponse(filter: JobResponseFilter): JobResponseAggregateResult @join__field(graph: CORE)
@@ -8870,6 +9005,7 @@ type Query {
   getGeneralLedgerAccount(id: ID, code: String): GeneralLedgerAccount @join__field(graph: CORE)
   queryGeneralLedgerAccount(filter: GeneralLedgerAccountFilter, order: GeneralLedgerAccountOrder, first: Int, offset: Int): [GeneralLedgerAccount] @join__field(graph: CORE)
   aggregateGeneralLedgerAccount(filter: GeneralLedgerAccountFilter): GeneralLedgerAccountAggregateResult @join__field(graph: CORE)
+  getAllEventsInTimeRange(filter: AllEventsInTimeRangeFilter!): [EventsByField] @join__field(graph: PROFILES)
 }
 
 type Reason
@@ -10401,6 +10537,17 @@ input UpdateJobOrderInput {
   remove: JobOrderPatch
 }
 
+input UpdateJobOrderNoteInput {
+  filter: JobOrderNoteFilter!
+  set: JobOrderNotePatch
+  remove: JobOrderNotePatch
+}
+
+type UpdateJobOrderNotePayload {
+  jobOrderNote(filter: JobOrderNoteFilter, order: JobOrderNoteOrder, first: Int, offset: Int): [JobOrderNote]
+  numUids: Int
+}
+
 type UpdateJobOrderPayload {
   jobOrder(filter: JobOrderFilter, order: JobOrderOrder, first: Int, offset: Int): [JobOrder]
   numUids: Int
@@ -11422,6 +11569,7 @@ input WorkCalendarDefinitionEntryRef {
 type WorkCalendarEntry
   @join__owner(graph: CORE)
   @join__type(graph: CORE, key: "id")
+  @join__type(graph: PROFILES, key: "id")
 {
   id: ID! @join__field(graph: CORE)
   isActive: Boolean @join__field(graph: CORE)
@@ -11434,6 +11582,7 @@ type WorkCalendarEntry
   properties(filter: PropertyFilter, order: PropertyOrder, first: Int, offset: Int): [Property] @join__field(graph: CORE)
   workCalendar(filter: WorkCalendarFilter): WorkCalendar @join__field(graph: CORE)
   propertiesAggregate(filter: PropertyFilter): PropertyAggregateResult @join__field(graph: CORE)
+  elapsedDuration: Int @join__field(graph: PROFILES, requires: "startDateTime finishDateTime")
 }
 
 type WorkCalendarEntryAggregateResult {
