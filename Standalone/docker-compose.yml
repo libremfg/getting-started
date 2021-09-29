@@ -65,8 +65,14 @@ services:
       - 18083:18083
     restart: always
     container_name: mqtt
+    healthcheck:
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      test: ["CMD", "curl", "-f", "http://mqtt:18083"]
   libre-server:
     image: ghcr.io/spruik/libre-server:Latest
+    restart: always
     ports:
       - 4001:80
     environment:
@@ -79,13 +85,16 @@ services:
     volumes:
       - ./libre-server/config:/etc/config
     depends_on:
-      - "influxdb"
-      - "mqtt"
-      - "alpha"
-      - "zero"
+      alpha:
+        condition: service_healthy
+      mqtt:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
     container_name: libre-server
   libre-core:
     image: ghcr.io/spruik/libre-core:0.2.0
+    restart: always
     environment:
       - LIBRE_CONFIG_FILE=/etc/config/config.json
     volumes:
@@ -94,32 +103,37 @@ services:
       - "influxdb"
       - "mqtt"
       - "zero"
-      - "alpha"
+      - "dgraph-init"
     container_name: libre-core
   graphql-pubsub:
     image: ghcr.io/spruik/graphql-pubsub:0.0.3
+    restart: always
     environment:
       - LIBRE_CONFIG_FILE=/etc/config/config.json
     volumes:
       - ./graphql-pubsub/config:/etc/config
     depends_on:
-      - "influxdb"
-      - "mqtt"
-      - "zero"
-      - "alpha"
+      alpha:
+        condition: service_healthy
+      mqtt:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
     container_name: graphql-pubsub
   libre-workflow-pubsub:
     image: ghcr.io/spruik/libre-workflow-pubsub:0.0.1
+    restart: always
     environment:
       - LIBRE_CONFIG_FILE=/etc/config/config.json
     volumes:
       - ./libre-workflow-pubsub/config:/etc/config
     depends_on:
-      - "influxdb"
-      - "mqtt"
-      - "graphql-pubsub"
-      - "zero"
-      - "alpha"
+      alpha:
+        condition: service_healthy
+      mqtt:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
     container_name: libre-workflow-pubsub
   influxdb:
     image: influxdb:2.0.7
@@ -137,7 +151,12 @@ services:
       - DOCKER_INFLUXDB_INIT_BUCKET=Libre
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=mytokenmytokenmytoken
     container_name: influxdb
-  bathurst-packaging-line1:
+    healthcheck:
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      test: ["CMD", "curl", "-f", "http://influxdb:8086"]
+  packml-sim:
     image: spruiktec/packml-simulator
     restart: always
     environment:
@@ -150,8 +169,12 @@ services:
       MQTT_CLIENT_ID: packml_sim
     mem_limit: 30MB
     depends_on:
-      - "influxdb"
-      - "mqtt"
+      alpha:
+        condition: service_healthy
+      mqtt:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
   libre-gateway:
     ports:
       - 4000:4000
@@ -167,8 +190,17 @@ services:
         source: ./libre-gateway/supergraph.graphql
         target: /app/supergraph.graphql
     depends_on:
-      - "alpha"
-      - "libre-server"
+      alpha:
+        condition: service_healthy
+      mqtt:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+    healthcheck:
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      test: ["CMD", "curl", "-f", "http://libre-gateway:4000"]
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -197,3 +229,18 @@ services:
     depends_on:
       alpha:
           condition: service_healthy
+  libre-edge-agent:
+    image: ghcr.io/spruik/libre-edge-agent:0.2.2
+    restart: always
+    environment:
+      - LIBRE_CONFIG_FILE=/etc/config/config.json
+    volumes:
+      - ./libre-edge-agent/config:/etc/config
+    depends_on:
+      alpha:
+        condition: service_healthy
+      mqtt:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+    container_name: libre-edge-agent
