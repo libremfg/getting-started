@@ -71,7 +71,7 @@ services:
       retries: 5
       test: ["CMD", "curl", "-f", "http://mqtt:18083"]
   libre-server:
-    image: ghcr.io/spruik/libre-server:Latest
+    image: ghcr.io/spruik/libre-server:0.0.4
     restart: always
     ports:
       - 4001:80
@@ -212,6 +212,7 @@ services:
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
       - ./grafana/plugins:/var/lib/grafana/plugins
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
       - ./grafana/data:/var/lib/grafana
       - ./grafana/grafana.ini:/etc/grafana/grafana.ini
     depends_on:
@@ -230,7 +231,7 @@ services:
       alpha:
           condition: service_healthy
   libre-edge-agent:
-    image: ghcr.io/spruik/libre-edge-agent:0.2.2
+    image: ghcr.io/spruik/libre-edge-agent:0.2.6
     restart: always
     environment:
       - LIBRE_CONFIG_FILE=/etc/config/config.json
