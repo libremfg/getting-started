@@ -21,8 +21,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 2,
-  "iteration": 1633569598147,
+  "iteration": 1633575179379,
   "links": [],
   "panels": [
     {
@@ -105,7 +104,7 @@
           "dataPath": "data",
           "endTimePath": "endTime",
           "groupBy": "",
-          "query": "from(bucket: \"Libre\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"eventLog\")\n  |> filter(fn: (r) => r[\"equipmentId\"] == \"${line}\")  \n  |> last()\n  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\") \n  |> drop(columns: [\"_start\", \"_stop\",\"_time\",\"_field\",\"_measurement\",\"equipmentId\",\"previousTimestamp\"])",
+          "query": "from(bucket: \"Libre\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"eventLog\")\n  |> filter(fn: (r) => r[\"equipmentId\"] == \"${line}\")  \n  |> filter(fn: (r) => r[\"_field\"] == \"packMLStatus\")  \n  |> last()\n  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\") \n  |> drop(columns: [\"_start\", \"_stop\",\"_time\",\"_field\",\"_measurement\",\"equipmentId\",\"previousTimestamp\"])",
           "queryText": "query {\n      data:submissions(user:\"$user\"){\n          Time:submitTime\n          idle running completed\n      }\n}",
           "refId": "A",
           "timeFormat": null,
@@ -377,7 +376,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "Vandelay",
           "value": "0x12"
         },
@@ -404,7 +403,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "PKG",
           "value": "0x13"
         },
@@ -460,12 +459,10 @@
         "current": {
           "selected": true,
           "text": [
-            "SpeedActual",
-            "SpeedTarget"
+            "SpeedActual"
           ],
           "value": [
-            "0x1b",
-            "0x1d"
+            "0x1b"
           ]
         },
         "datasource": "MKG",
@@ -498,5 +495,5 @@
   "timezone": "",
   "title": "Line Overview",
   "uid": "q45UmQI7k",
-  "version": 36
+  "version": 37
 }
