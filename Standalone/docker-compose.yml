@@ -58,7 +58,7 @@ services:
       - "alpha"
       - "zero"
   mqtt:
-    image:  emqx/emqx:latest
+    image:  emqx/emqx:4.3.8
     ports:
       - 1883:1883
       - 8083:8083
