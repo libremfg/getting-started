@@ -1,0 +1,499 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "iteration": 1633575179379,
+  "links": [],
+  "panels": [
+    {
+      "datasource": "Historian",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "dark-red",
+                  "index": 2,
+                  "text": "Held"
+                },
+                "1": {
+                  "color": "dark-red",
+                  "index": 1,
+                  "text": "Held"
+                },
+                "6": {
+                  "color": "super-light-green",
+                  "index": 0,
+                  "text": "Execute"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 8,
+        "x": 0,
+        "y": 0
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": true
+        },
+        "text": {
+          "valueSize": 60
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "8.1.3",
+      "targets": [
+        {
+          "aliasBy": "",
+          "annotationTags": "",
+          "annotationText": "",
+          "annotationTitle": "",
+          "constant": 6.5,
+          "dataPath": "data",
+          "endTimePath": "endTime",
+          "groupBy": "",
+          "query": "from(bucket: \"Libre\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"eventLog\")\n  |> filter(fn: (r) => r[\"equipmentId\"] == \"${line}\")  \n  |> filter(fn: (r) => r[\"_field\"] == \"packMLStatus\")  \n  |> last()\n  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\") \n  |> drop(columns: [\"_start\", \"_stop\",\"_time\",\"_field\",\"_measurement\",\"equipmentId\",\"previousTimestamp\"])",
+          "queryText": "query {\n      data:submissions(user:\"$user\"){\n          Time:submitTime\n          idle running completed\n      }\n}",
+          "refId": "A",
+          "timeFormat": null,
+          "timePath": "Time"
+        }
+      ],
+      "transformations": [],
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": "MKG",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 100,
+            "lineWidth": 0
+          },
+          "mappings": [
+            {
+              "options": {
+                "Execute": {
+                  "color": "#808080",
+                  "index": 0
+                },
+                "Held": {
+                  "color": "dark-red",
+                  "index": 1
+                },
+                "Suspended": {
+                  "color": "super-light-orange",
+                  "index": 2
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "dtdhms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 3
+      },
+      "id": 2,
+      "options": {
+        "alignValue": "left",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "mergeValues": false,
+        "rowHeight": 1,
+        "showValue": "never",
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.1.3",
+      "targets": [
+        {
+          "aliasBy": "",
+          "annotationTags": "",
+          "annotationText": "",
+          "annotationTitle": "",
+          "constant": 6.5,
+          "dataPath": "getEquipment.Events",
+          "endTimePath": "endTime",
+          "groupBy": "",
+          "queryText": "query{\n  getEquipment(id:\"${line}\"){\n    id\n    label\n    Events:eventsByField(filter:{from:\"${__from:date:iso}\",to:\"${__to:date:iso}\",interpolateAtRangeBoundary:true}){\n      s:packMLStatus\n      startDateTime\n    }\n  }\n}",
+          "refId": "A",
+          "timeFormat": null,
+          "timePath": "startDateTime"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "startDateTime"
+              }
+            ]
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "state-timeline"
+    },
+    {
+      "datasource": "Historian",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "stepAfter",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "id": 12,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "query": "from(bucket: \"Libre\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"EquipmentPropertyValues\")\n  |> filter(fn: (r) => contains(value: r[\"propId\"], set: ${properties:json}))\n  |> filter(fn: (r) => r[\"equipmentId\"] == \"${line}\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: true)\n  |> yield(name: \"last\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Performance",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "MKG",
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 12
+      },
+      "id": 14,
+      "options": {
+        "eventMetric": "Events",
+        "reasonMetric": "Reasons"
+      },
+      "targets": [
+        {
+          "aliasBy": "",
+          "annotationTags": "",
+          "annotationText": "",
+          "annotationTitle": "",
+          "constant": 6.5,
+          "dataPath": "getEquipment",
+          "endTimePath": "endTime",
+          "groupBy": "",
+          "queryText": "query {\n      getEquipment(id:\"${line}\"){\n          id\n          name\n      }\n}",
+          "refId": "Equipment",
+          "timeFormat": null,
+          "timePath": "Time"
+        },
+        {
+          "aliasBy": "",
+          "annotationTags": "",
+          "annotationText": "",
+          "annotationTitle": "",
+          "constant": 6.5,
+          "dataPath": "getEquipment.Events",
+          "endTimePath": "endTime",
+          "groupBy": "",
+          "hide": false,
+          "queryText": "query{\n  getEquipment(id:\"${line}\"){\n    id\n    label\n    Events:eventsByField(filter:{filterField:\"packMLStatus\",filterValue:\"Execute\",from:\"${__from:date:iso}\",to:\"${__to:date:iso}\"}){\n      packMLStatus\n      startDateTime\n      endDateTime\n      duration\n      reasonCategoryCode\n      reasonCode\n      reasonText\n    }\n  }\n}",
+          "refId": "Events",
+          "timeFormat": null,
+          "timePath": "startDateTime"
+        },
+        {
+          "aliasBy": "",
+          "annotationTags": "",
+          "annotationText": "",
+          "annotationTitle": "",
+          "constant": 6.5,
+          "dataPath": "getEquipment.Reasons",
+          "endTimePath": "endTime",
+          "groupBy": "",
+          "hide": false,
+          "queryText": "query{\n  getEquipment(id:\"$line\"){\n    id\n    label\n    Reasons:reasonListWithOverrides(filter:{not:{has:parent}}){\n      id\n      isActive\n      class\n      label\n      text\n      parent{id}\n      standardValue\n      category{code}\n    }\n  }\n}",
+          "refId": "Reasons",
+          "timeFormat": null,
+          "timePath": "Time"
+        },
+        {
+          "aliasBy": "",
+          "annotationTags": "",
+          "annotationText": "",
+          "annotationTitle": "",
+          "constant": 6.5,
+          "dataPath": "getEquipment.Reasons",
+          "endTimePath": "endTime",
+          "groupBy": "",
+          "hide": false,
+          "queryText": "query{\n  getEquipment(id:\"$line\"){\n    id\n    label\n    Reasons:reasonListWithOverrides(filter:{has:parent}){\n      id\n      isActive\n      class\n      label\n      text\n      parent{id}\n      standardValue\n      category{code}\n    }\n  }\n}",
+          "refId": "ReasonsWithParents",
+          "timeFormat": null,
+          "timePath": "Time"
+        }
+      ],
+      "title": "Panel Title",
+      "type": "libre-event-editor-table-panel"
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 30,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "Vandelay",
+          "value": "0x12"
+        },
+        "datasource": "MKG",
+        "definition": "query{\n  queryEquipment(filter:{not:{has:parent},and:{not:{isActive:false}}}){\n    __text: name\n    __value: id\n  }\n} (queryEquipment)",
+        "description": "Sites",
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "site",
+        "multi": false,
+        "name": "site",
+        "options": [],
+        "query": {
+          "dataPath": "queryEquipment",
+          "queryText": "query{\n  queryEquipment(filter:{not:{has:parent},and:{not:{isActive:false}}}){\n    __text: name\n    __value: id\n  }\n}"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "PKG",
+          "value": "0x13"
+        },
+        "datasource": "MKG",
+        "definition": "query{\n  getEquipment(id:\"$site\"){\n    children(filter:{not:{isActive:false}}){\n      __text: label\n      __value: id\n    }\n  }\n} (getEquipment.children)",
+        "description": "Areas",
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "area",
+        "multi": false,
+        "name": "area",
+        "options": [],
+        "query": {
+          "dataPath": "getEquipment.children",
+          "queryText": "query{\n  getEquipment(id:\"$site\"){\n    children(filter:{not:{isActive:false}}){\n      __text: label\n      __value: id\n    }\n  }\n}"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "GloveLine01",
+          "value": "0x14"
+        },
+        "datasource": "MKG",
+        "definition": "query{\n  getEquipment(id:\"$area\"){\n    children(filter:{not:{isActive:false}}){\n      __text: label\n      __value: id\n    }\n  }\n} (getEquipment.children)",
+        "description": "Line",
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "line",
+        "multi": false,
+        "name": "line",
+        "options": [],
+        "query": {
+          "dataPath": "getEquipment.children",
+          "queryText": "query{\n  getEquipment(id:\"$area\"){\n    children(filter:{not:{isActive:false}}){\n      __text: label\n      __value: id\n    }\n  }\n}"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": [
+            "SpeedActual"
+          ],
+          "value": [
+            "0x1b"
+          ]
+        },
+        "datasource": "MKG",
+        "definition": "query{\n  getEquipment(id:\"${line}\"){\n    name\n    props:propertyListWithOverrides{\n      __text:name\n      __value:id\n    }\n  }\n} (getEquipment.props)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": true,
+        "name": "properties",
+        "options": [],
+        "query": {
+          "dataPath": "getEquipment.props",
+          "queryText": "query{\n  getEquipment(id:\"${line}\"){\n    name\n    props:propertyListWithOverrides{\n      __text:name\n      __value:id\n    }\n  }\n}"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Line Overview",
+  "uid": "q45UmQI7k",
+  "version": 37
+}

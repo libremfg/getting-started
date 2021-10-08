@@ -1,0 +1,87 @@
+{
+  "libreLogger" : {
+    "defaultLevel": "DEBUG",
+    "defaultDestination": "CONSOLE",
+    "loggers": [
+      {"MAIN": {"topic":"MAIN"}},
+      {"SERVER": {"topic":"SERVER"}},
+      {"EdgeService": {"topic":"EDGESVC"}},
+      {"PlcConnectorMQTT" : {"topic": "PLCMQTT"}},
+      {"graphQLTrans" : {"topic": "GQLTRANS"}},
+      {"edge-daemon": {"topic":"EDGEDMON"}},
+      {"SubscriptionHandler": {"topic":"SUBHANDLR"}},
+      {"RESTAPI": {"topic":"RESTAPI"}},
+
+      {"DEFAULT": {"topic": "DEFAULT"}}
+    ]
+  },
+    "libreDataStoreGraphQL" : {
+    "GRAPHQL_URL": "http://alpha:8080/graphql"
+  },
+  "pubSubConnectorMQTT" : {
+    "MQTT_SERVER":   "mqtt://mqtt:1883",
+    "MQTT_USER":     "admin",
+    "MQTT_PWD":      "public",
+    "MQTT_SVC_NAME": "GraphqlPubSub"
+  },
+  "GraphQLSubscriber": {
+    "GRAPHQL_URL": "http://alpha:8080/graphql"
+  },
+  "SubscriptionHandler" : {
+    "SUBSCRIPTIONS" : [
+      {
+        "TOPIC" : "Libre/subscriptions/workflowSpecification",
+        "QUERY": "subscription{\n  queryWorkflowSpecification{\n    id\n    isActive\n    name\n    nodes{\n      id\n      uiComponent\n    form{\n  name\n    }\n   isActive\n      name\n      description\n      nodeType{\n        id\n        name\n      nodeClass\n}\n      properties{\n        id\n        name\n        dataType\n      }\n      inflows {\n        from{id,isActive}\n      }\n      outflows{\n        to{id,isActive}\n        condition\n      }\n    }\n  }\n}",
+        "SPLIT": "false"
+      },
+      {
+        "TOPIC" : "Libre/subscriptions/workflow/maintenance",
+        "QUERY": "subscription{\n  queryWorkflowInstance(filter:{not:{status:{eq:COMPLETED}}})@cascade(fields:\"nodeInstances\"){\n    id\n    status\n    workflowSpecification{id,name}\n    nodeInstances(filter:{not:{status:{eq:COMPLETED}}})@cascade(fields:\"node\"){\n      id\n      status\n      node @cascade(fields:\"role\"){\n        id\n      \tname\n        form{name}\n        uiComponent\n        role(filter:{name:{eq:\"Maintenance\"}}){\n          name\n        }\n      }\n    }\n  }\n}",
+        "SPLIT": "false"
+      },
+      {
+        "TOPIC" : "Libre/subscriptions/workflow",
+        "QUERY": "subscription{\n  queryWorkflowInstance(filter:{not:{status:{eq:COMPLETED}}}){\n    id\n    status\n    workflowSpecification{id,name}\n    nodeInstances(filter:{not:{status:{eq:COMPLETED}}}){\n      id\n      status\n      node{\n        id\n      \tname\n        form{name}\n        uiComponent\n        role{\n          name\n        }\n      }\n    }\n  }\n}",
+        "SPLIT": "false"
+      },
+      {
+        "TOPIC": "Libre/subscriptions/activeTasks",
+        "QUERY": "subscription{\n  queryWorkflowNodeInstance(filter:{not:{status:{eq:COMPLETED}}}){\n    id\n    status\n    workflowInstance {\n      id\n      __typename\n    }\n    node {\n      id\n      name\n      uiComponent\n      role{\n        name\n        __typename\n      }\n      form {\n        id\n        name\n        jsonSchema\n        uiSchema\n        __typename\n      }\n      workflowSpecification {\n        id\n        name\n        __typename\n      }\n      __typename\n    }\n  }\n}",
+        "SPLIT": "false"
+      },
+      {
+        "TOPIC": "Libre/subscriptions/activeTasks/Maintenance",
+        "QUERY": "subscription{\n  queryWorkflowNodeInstance(filter:{not:{status:{eq:COMPLETED}}})@cascade(fields:\"node\"){\n    id\n    status\n    workflowInstance {\n      id\n      __typename\n    }\n    node @cascade(fields:\"role\"){\n      id\n      name\n      uiComponent\n      role(filter:{name:{eq:\"Maintenance\"}}){\n        name\n        __typename\n      }\n      form {\n        id\n        name\n        jsonSchema\n        uiSchema\n        __typename\n      }\n      workflowSpecification {\n        id\n        name\n        __typename\n      }\n      __typename\n    }\n  }\n}",
+        "SPLIT": "false"
+      },
+      {
+        "TOPIC": "Libre/subscriptions/activeWorkflowInstances/equipment",
+        "QUERY": "subscription{\n  queryEquipment{\n    id\n    workflowInstances(filter:{not:{status:{eq:COMPLETED}}}){\n      id\n      workflowSpecification{name}\n      status\n      nodeInstances(filter:{not:{status:{eq:COMPLETED}}}){\n        id\n        status\n        node{\n          id\n          name\n          uiComponent\n          form{\n            name\n            jsonSchema\n            uiSchema\n          }\n        }\n        events(order:{desc:createdDateTime} first:1){createdDateTime}\n      }\n      propertyInstances{\n        workflowProperty{name}\n        values(order:{desc:createdDateTime} first:1){value}\n      }\n    }\n  }\n}",
+        "SPLIT": "true"
+      },
+      {
+        "TOPIC": "Libre/subscriptions/propertyNameAliases/equipment",
+        "QUERY": "subscription{\n  queryEquipment{\n    id\n    propertyNameAliases{\n      property{name}\n      alias\n      system\n    }\n  }\n}",
+        "SPLIT": "true"
+      },
+      {
+        "TOPIC": "Libre/subscriptions/equipmentList",
+        "QUERY": "subscription{\n  queryEquipment(filter:{not:{isActive:false},equipmentLevel:{in:[ProductionLine,ProductionUnit,ProcessCell,WorkCell,WorkCenter,WorkUnit,ControlModule,EquipmentModule]}}){\n    id\n    name\n    dataProvider\n    equipmentClass{\n      name\n    }\n    equipmentLevel  \n  }\n}",
+        "SPLIT": "false"
+      },
+      {
+        "TOPIC": "Libre/subscriptions/equipmentConfig",
+        "QUERY": "subscription{\n  queryEquipment (filter:{not:{isActive:false}}) @cascade(fields:[\"propertyNameAliases\"]){\n    id\n    name\n    dataProvider\n    dataProviderConnection\n    addressTemplate\n    equipmentClass{\n      properties{\n      id\n      name\n      description\n      dataType\n      storeHistory\n      unitOfMeasure{code}\n    }\n      eventDefinitions{\n        id\n        name\n        messageClass\n        triggerProperties{\n          id\n          name\n        }\n        triggerExpression\n        payloadProperties{\n          id\n          name\n        }\n        payloadFields{\n          name\n          expression\n        }\n      }\n    }\n    propertyNameAliases{\n      system\n      alias\n      property{name}\n    }\n    propertyOverrides{\n      property{\n        id\n        name\n      }\n      ignore\n    } \n  }\n}",
+        "SPLIT": "true"
+      }
+    ]
+  },
+  "RESTAPI": {
+    "PORT" : "28080"
+  },
+  "edge": {
+    "loggerHook": "edge-daemon"
+  }
+}
+
+

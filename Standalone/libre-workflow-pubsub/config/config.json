@@ -1,0 +1,53 @@
+{
+  "libreLogger" : {
+    "defaultLevel": "DEBUG",
+    "defaultDestination": "CONSOLE",
+    "loggers": [
+      {"MAIN": {"topic":"MAIN"}},
+      {"server": {"topic":"SERVER"}},
+      {"EquipmentManager": {"topic":"EQMGR"}},
+      {"ManagedEquipmentHandler": {"topic":"EQHNDLR"}},
+      {"PlcConnectorMQTT" : {"topic": "PLCMQTT"}},
+      {"graphQLTrans" : {"topic": "GQLTRANS"}},
+      {"tagChangeHandlerFactory" : {"topic": "THFACT"}},
+      {"managedEquipmentDefault" : {"topic": "MGDEQ"}},
+      {"DATAGQL": {"topic":"DATAGQL"}},
+      {"EQFINDR": {"topic":"EQFINDR"}},
+      {"EQCACHE": {"topic":"EQCACHE"}},
+      {"LIBRCONN": {"topic":"LIBRCONN"}},
+      {"EVTDISTR": {"topic":"EVTDISTR"}},
+      {"EVTEVALR": {"topic":"EVTEVALR"}},
+      {"valueChangeFilterFactory": {"topic":"FLTRFCTR"}},
+      {"edge-daemon": {"topic":"EDGEDMON"}},
+      {"EVNTEVAL": {"topic":"EVNTEVAL"}},
+      {"TAGCHNG": {"topic":"TAGCHNG"}},
+      {"MgdEqHandler": {"topic": "EQDMON"}},
+      {"RESTAPI": {"topic":"RESTAPI"}},
+      {"WF_FXNS": {"topic":"WF_FXNS"}},
+      {"PubSubMQTT": {"topic":"PubSubMQTT"}},
+      {"DEFAULT": {"topic": "DEFAULT"}},
+      {"Workflow_GQL": {"topic": "Workflow_GQL"}}
+    ]
+  },
+  "pubSubConnectorMQTT" : {
+    "MQTT_SERVER":   "mqtt://mqtt:1883",
+    "MQTT_USER":     "admin",
+    "MQTT_PWD":      "public",
+    "MQTT_SVC_NAME": "Workflow-GN"
+  },
+  "libreDataStoreGraphQL" : {
+    "GRAPHQL_URL": "http://alpha:8080/graphql"
+  },
+  "RESTAPI": {
+    "PORT" : "28080"
+  },
+  "workflowFunctions" : {
+    "loggerHook" : "WF_FXNS",
+    "tagChangeWaitLimit" : "5"
+  },
+  "workflow": {
+
+  }
+}
+
+

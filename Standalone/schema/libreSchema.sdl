@@ -1,0 +1,2040 @@
+###########################################################################
+# define our authorization model here
+###########################################################################
+
+type User  {
+    id:ID!
+    username: String! @id
+    name: String
+    isType: UserType! @search
+    hasRole: [UserRole] @hasInverse(field:user)
+    tasks: [WorkflowNodeInstance] @hasInverse(field:assignedUser)
+    isActive:Boolean
+}
+
+type UserRole {
+    id:ID!
+    role:Role! @hasInverse(field:hasMembers)
+    user:User! @hasInverse(field:hasRole)
+    responsibilities:[Equipment]!
+    isActive:Boolean
+}
+
+enum UserType{
+    USER
+    ADMIN
+}
+
+type Role {
+  name: String! @id
+  hasMembers:[UserRole] @hasInverse(field:role)
+  hasGrantedRights:[AccessRight] @hasInverse(field:forRole)
+  isActive:Boolean
+  workflowNodes:[WorkflowNode] @hasInverse(field:role)
+}
+
+type AccessRight  {
+  id: ID!
+  name: AccessRights @search
+  forRole: Role @hasInverse(field:hasGrantedRights)
+  isActive:Boolean
+}
+
+enum AccessRights {
+    isAdmin
+   getUser
+   queryUser
+   aggregateUser
+   getUserRole
+   queryUserRole
+   aggregateUserRole
+   getRole
+   queryRole
+   aggregateRole
+   getAccessRight
+   queryAccessRight
+   aggregateAccessRight
+   getACL
+   queryACL
+   aggregateACL
+   getMenu
+   queryMenu
+   aggregateMenu
+   getOperationsRequest
+   queryOperationsRequest
+   aggregateOperationsRequest
+   getRequestState
+   queryRequestState
+   aggregateRequestState
+   getOperationsDefinition
+   queryOperationsDefinition
+   aggregateOperationsDefinition
+   getBillOfMaterial
+   queryBillOfMaterial
+   aggregateBillOfMaterial
+   getOperationsSegment
+   queryOperationsSegment
+   aggregateOperationsSegment
+   getTransitionEventRuleset
+   queryTransitionEventRuleset
+   aggregateTransitionEventRuleset
+   getStateEventRuleset
+   queryStateEventRuleset
+   aggregateStateEventRuleset
+   getMaterialEventRuleset
+   queryMaterialEventRuleset
+   aggregateMaterialEventRuleset
+   getOrderStartRuleset
+   queryOrderStartRuleset
+   aggregateOrderStartRuleset
+   getSegmentInvoiceSetting
+   querySegmentInvoiceSetting
+   aggregateSegmentInvoiceSetting
+   getSegmentDependency
+   querySegmentDependency
+   aggregateSegmentDependency
+   getWorkMaster
+   queryWorkMaster
+   aggregateWorkMaster
+   getWorkDirective
+   queryWorkDirective
+   aggregateWorkDirective
+   getJobOrder
+   queryJobOrder
+   aggregateJobOrder
+   getJobResponse
+   queryJobResponse
+   aggregateJobResponse
+   getEventLog
+   queryEventLog
+   aggregateEventLog
+   getQuantityLog
+   queryQuantityLog
+   aggregateQuantityLog
+   getEquipmentSpecification
+   queryEquipmentSpecification
+   aggregateEquipmentSpecification
+   getMaterialSpecification
+   queryMaterialSpecification
+   aggregateMaterialSpecification
+   getPersonnelSpecification
+   queryPersonnelSpecification
+   aggregatePersonnelSpecification
+   getEquipment
+   queryEquipment
+   aggregateEquipment
+   getEquipmentNameAlias
+   queryEquipmentNameAlias
+   aggregateEquipmentNameAlias
+   getPropertyNameAlias
+   queryPropertyNameAlias
+   aggregatePropertyNameAlias
+   getPropertyValueAlias
+   queryPropertyValueAlias
+   aggregatePropertyValueAlias
+   getEquipmentReasonOverride
+   queryEquipmentReasonOverride
+   aggregateEquipmentReasonOverride
+   getEquipmentClass
+   queryEquipmentClass
+   aggregateEquipmentClass
+   getProperty
+   queryProperty
+   aggregateProperty
+   getEquipmentPropertyOverride
+   queryEquipmentPropertyOverride
+   aggregateEquipmentPropertyOverride
+   getEventDefinition
+   queryEventDefinition
+   aggregateEventDefinition
+   getPayloadFieldDefinition
+   queryPayloadFieldDefinition
+   aggregatePayloadFieldDefinition
+   getReason
+   queryReason
+   aggregateReason
+   getReasonCategory
+   queryReasonCategory
+   aggregateReasonCategory
+   getMaterialClass
+   queryMaterialClass
+   aggregateMaterialClass
+   getMaterialDefinition
+   queryMaterialDefinition
+   aggregateMaterialDefinition
+   getMaterialAlternate
+   queryMaterialAlternate
+   aggregateMaterialAlternate
+   getCarrier
+   queryCarrier
+   aggregateCarrier
+   getMaterialLot
+   queryMaterialLot
+   aggregateMaterialLot
+   getMaterialSubLot
+   queryMaterialSubLot
+   aggregateMaterialSubLot
+   getMaterialUnit
+   queryMaterialUnit
+   aggregateMaterialUnit
+   getInventoryTransaction
+   queryInventoryTransaction
+   aggregateInventoryTransaction
+   getMaterialEquipment
+   queryMaterialEquipment
+   aggregateMaterialEquipment
+   getUnitOfMeasure
+   queryUnitOfMeasure
+   aggregateUnitOfMeasure
+   getUnitOfMeasureConversion
+   queryUnitOfMeasureConversion
+   aggregateUnitOfMeasureConversion
+   getMaterialStatus
+   queryMaterialStatus
+   aggregateMaterialStatus
+   getMaterialStateModel
+   queryMaterialStateModel
+   aggregateMaterialStateModel
+   getMaterialStateTransition
+   queryMaterialStateTransition
+   aggregateMaterialStateTransition
+   getPersonnelClass
+   queryPersonnelClass
+   aggregatePersonnelClass
+   getPerson
+   queryPerson
+   aggregatePerson
+   getTestSpecification
+   queryTestSpecification
+   aggregateTestSpecification
+   getTestResult
+   queryTestResult
+   aggregateTestResult
+   getWorkCalendarDefinitionEntry
+   queryWorkCalendarDefinitionEntry
+   aggregateWorkCalendarDefinitionEntry
+   getWorkCalendarEntry
+   queryWorkCalendarEntry
+   aggregateWorkCalendarEntry
+   getWorkCalendar
+   queryWorkCalendar
+   aggregateWorkCalendar
+   getWorkflowSpecification
+   queryWorkflowSpecification
+   aggregateWorkflowSpecification
+   getWorkflowInstance
+   queryWorkflowInstance
+   aggregateWorkflowInstance
+   getWorkflowNode
+   queryWorkflowNode
+   aggregateWorkflowNode
+   getWorkflowNodeInstance
+   queryWorkflowNodeInstance
+   aggregateWorkflowNodeInstance
+   getWorkflowNodeEvent
+   queryWorkflowNodeEvent
+   aggregateWorkflowNodeEvent
+   getWorkflowNodeType
+   queryWorkflowNodeType
+   aggregateWorkflowNodeType
+   getWorkflowConnection
+   queryWorkflowConnection
+   aggregateWorkflowConnection
+   getWorkflowConnectionType
+   queryWorkflowConnectionType
+   aggregateWorkflowConnectionType
+   getWorkflowProperty
+   queryWorkflowProperty
+   aggregateWorkflowProperty
+   getWorkflowPropertyInstance
+   queryWorkflowPropertyInstance
+   aggregateWorkflowPropertyInstance
+   getWorkflowPropertyValue
+   queryWorkflowPropertyValue
+   aggregateWorkflowPropertyValue
+   getForm
+   queryForm
+   aggregateForm
+   getASNStaging
+   queryASNStaging
+   aggregateASNStaging
+   getPartner
+   queryPartner
+   aggregatePartner
+   getInventoryHandlingPolicy
+   queryInventoryHandlingPolicy
+   aggregateInventoryHandlingPolicy
+   getInventoryHandlingRule
+   queryInventoryHandlingRule
+   aggregateInventoryHandlingRule
+   getAddress
+   queryAddress
+   aggregateAddress
+   getOrder
+   queryOrder
+   aggregateOrder
+   getOrderLine
+   queryOrderLine
+   aggregateOrderLine
+   getShipment
+   queryShipment
+   aggregateShipment
+   getShipmentItem
+   queryShipmentItem
+   aggregateShipmentItem
+   getBox
+   queryBox
+   aggregateBox
+   getGeneralLedgerAccount
+   queryGeneralLedgerAccount
+   aggregateGeneralLedgerAccount
+   addUser
+   updateUser
+   deleteUser
+   addUserRole
+   updateUserRole
+   deleteUserRole
+   addRole
+   updateRole
+   deleteRole
+   addAccessRight
+   updateAccessRight
+   deleteAccessRight
+   addACL
+   updateACL
+   deleteACL
+   addMenu
+   updateMenu
+   deleteMenu
+   addOperationsRequest
+   updateOperationsRequest
+   deleteOperationsRequest
+   addRequestState
+   updateRequestState
+   deleteRequestState
+   addOperationsDefinition
+   updateOperationsDefinition
+   deleteOperationsDefinition
+   addBillOfMaterial
+   updateBillOfMaterial
+   deleteBillOfMaterial
+   addOperationsSegment
+   updateOperationsSegment
+   deleteOperationsSegment
+   addTransitionEventRuleset
+   updateTransitionEventRuleset
+   deleteTransitionEventRuleset
+   addStateEventRuleset
+   updateStateEventRuleset
+   deleteStateEventRuleset
+   addMaterialEventRuleset
+   updateMaterialEventRuleset
+   deleteMaterialEventRuleset
+   addOrderStartRuleset
+   updateOrderStartRuleset
+   deleteOrderStartRuleset
+   addSegmentInvoiceSetting
+   updateSegmentInvoiceSetting
+   deleteSegmentInvoiceSetting
+   addSegmentDependency
+   updateSegmentDependency
+   deleteSegmentDependency
+   addWorkMaster
+   updateWorkMaster
+   deleteWorkMaster
+   addWorkDirective
+   updateWorkDirective
+   deleteWorkDirective
+   addJobOrder
+   updateJobOrder
+   deleteJobOrder
+   addJobResponse
+   updateJobResponse
+   deleteJobResponse
+   addEventLog
+   updateEventLog
+   deleteEventLog
+   addQuantityLog
+   updateQuantityLog
+   deleteQuantityLog
+   addEquipmentSpecification
+   updateEquipmentSpecification
+   deleteEquipmentSpecification
+   addMaterialSpecification
+   updateMaterialSpecification
+   deleteMaterialSpecification
+   addPersonnelSpecification
+   updatePersonnelSpecification
+   deletePersonnelSpecification
+   addEquipment
+   updateEquipment
+   deleteEquipment
+   addEquipmentNameAlias
+   updateEquipmentNameAlias
+   deleteEquipmentNameAlias
+   addPropertyNameAlias
+   updatePropertyNameAlias
+   deletePropertyNameAlias
+   addPropertyValueAlias
+   updatePropertyValueAlias
+   deletePropertyValueAlias
+   addEquipmentReasonOverride
+   updateEquipmentReasonOverride
+   deleteEquipmentReasonOverride
+   addEquipmentClass
+   updateEquipmentClass
+   deleteEquipmentClass
+   addProperty
+   updateProperty
+   deleteProperty
+   addEquipmentPropertyOverride
+   updateEquipmentPropertyOverride
+   deleteEquipmentPropertyOverride
+   addEventDefinition
+   updateEventDefinition
+   deleteEventDefinition
+   addPayloadFieldDefinition
+   updatePayloadFieldDefinition
+   deletePayloadFieldDefinition
+   addReason
+   updateReason
+   deleteReason
+   addReasonCategory
+   updateReasonCategory
+   deleteReasonCategory
+   addMaterialClass
+   updateMaterialClass
+   deleteMaterialClass
+   addMaterialDefinition
+   updateMaterialDefinition
+   deleteMaterialDefinition
+   addMaterialAlternate
+   updateMaterialAlternate
+   deleteMaterialAlternate
+   addCarrier
+   updateCarrier
+   deleteCarrier
+   addMaterialLot
+   updateMaterialLot
+   deleteMaterialLot
+   addMaterialSubLot
+   updateMaterialSubLot
+   deleteMaterialSubLot
+   addMaterialUnit
+   updateMaterialUnit
+   deleteMaterialUnit
+   addInventoryTransaction
+   updateInventoryTransaction
+   deleteInventoryTransaction
+   addMaterialEquipment
+   updateMaterialEquipment
+   deleteMaterialEquipment
+   addUnitOfMeasure
+   updateUnitOfMeasure
+   deleteUnitOfMeasure
+   addUnitOfMeasureConversion
+   updateUnitOfMeasureConversion
+   deleteUnitOfMeasureConversion
+   addMaterialStatus
+   updateMaterialStatus
+   deleteMaterialStatus
+   addMaterialStateModel
+   updateMaterialStateModel
+   deleteMaterialStateModel
+   addMaterialStateTransition
+   updateMaterialStateTransition
+   deleteMaterialStateTransition
+   addPersonnelClass
+   updatePersonnelClass
+   deletePersonnelClass
+   addPerson
+   updatePerson
+   deletePerson
+   addTestSpecification
+   updateTestSpecification
+   deleteTestSpecification
+   addTestResult
+   updateTestResult
+   deleteTestResult
+   addWorkCalendarDefinitionEntry
+   updateWorkCalendarDefinitionEntry
+   deleteWorkCalendarDefinitionEntry
+   addWorkCalendarEntry
+   updateWorkCalendarEntry
+   deleteWorkCalendarEntry
+   addWorkCalendar
+   updateWorkCalendar
+   deleteWorkCalendar
+   addWorkflowSpecification
+   updateWorkflowSpecification
+   deleteWorkflowSpecification
+   addWorkflowInstance
+   updateWorkflowInstance
+   deleteWorkflowInstance
+   addWorkflowNode
+   updateWorkflowNode
+   deleteWorkflowNode
+   addWorkflowNodeInstance
+   updateWorkflowNodeInstance
+   deleteWorkflowNodeInstance
+   addWorkflowNodeEvent
+   updateWorkflowNodeEvent
+   deleteWorkflowNodeEvent
+   addWorkflowNodeType
+   updateWorkflowNodeType
+   deleteWorkflowNodeType
+   addWorkflowConnection
+   updateWorkflowConnection
+   deleteWorkflowConnection
+   addWorkflowConnectionType
+   updateWorkflowConnectionType
+   deleteWorkflowConnectionType
+   addWorkflowProperty
+   updateWorkflowProperty
+   deleteWorkflowProperty
+   addWorkflowPropertyInstance
+   updateWorkflowPropertyInstance
+   deleteWorkflowPropertyInstance
+   addWorkflowPropertyValue
+   updateWorkflowPropertyValue
+   deleteWorkflowPropertyValue
+   addForm
+   updateForm
+   deleteForm
+   addASNStaging
+   updateASNStaging
+   deleteASNStaging
+   addPartner
+   updatePartner
+   deletePartner
+   addInventoryHandlingPolicy
+   updateInventoryHandlingPolicy
+   deleteInventoryHandlingPolicy
+   addInventoryHandlingRule
+   updateInventoryHandlingRule
+   deleteInventoryHandlingRule
+   addAddress
+   updateAddress
+   deleteAddress
+   addOrder
+   updateOrder
+   deleteOrder
+   addOrderLine
+   updateOrderLine
+   deleteOrderLine
+   addShipment
+   updateShipment
+   deleteShipment
+   addShipmentItem
+   updateShipmentItem
+   deleteShipmentItem
+   addBox
+   updateBox
+   deleteBox
+   addGeneralLedgerAccount
+   updateGeneralLedgerAccount
+   deleteGeneralLedgerAccount
+}
+
+type ACL {
+    id: ID!
+    isActive:Boolean @search
+    level: AccessLevel
+    grants: Role
+}
+
+enum AccessLevel {
+  VIEWER
+  MODERATOR
+  OWNER
+}
+
+# ################################################################################
+# Start of Libre System entities here
+# ################################################################################
+"""
+Store the heartbeat timestamps of connected libre-services.
+microservices can subscribe to this entity to check the status of their subscription
+"""
+type LibreService  @withSubscription @key(fields:"id"){
+    id: ID!
+    name: String! @id
+    heartbeat: DateTime
+}
+
+# ################################################################################
+# Start of Menu data model and enumerations here
+# ################################################################################
+
+type Menu {
+    id: ID!
+    label: String! @search(by: [hash])
+    access: [Role!]!
+    parent: Menu @hasInverse(field: children)
+    children: [Menu!] @hasInverse(field: parent)
+    menuPage: String
+    icon: String
+    isSection: Boolean!
+    isPage: Boolean!
+    orderNumber: Int
+}
+
+# ################################################################################
+# Start of the Work Schedule domain entities
+# ################################################################################
+"""
+A request for operations to be performed is an operations schedule.
+The schedule may apply to operations, maintenance, quality or inventory operations
+"""
+type OperationsRequest @withSubscription @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    code:String! @id
+    operationsType: WorkType!
+    plannedStartDateTime:DateTime
+    plannedEndDateTime:DateTime
+    priority:String
+    operationsDefinition:OperationsDefinition!
+    requestState:RequestState!
+    quantity:Float!
+    quantityUoM:UnitOfMeasure!
+    jobOrders:[JobOrder] @hasInverse(field:operationsRequest)
+}
+type RequestState @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    name:String! @id
+    description:String
+}
+
+# ################################################################################
+# Start of the Work Definition domain entities
+# ################################################################################
+"""
+An identification of the resources and workflow required to perform a specified unit of work
+shall be defined as a work definition. The work definition may apply to production, maintenance, quality and inventory
+activities.
+"""
+enum WorkType {
+    Production
+    Maintenance
+    Quality
+    Inventory
+    Mixed
+}
+type OperationsDefinition @withSubscription @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    name:String! @id
+    material:MaterialDefinition @hasInverse(field:operationsDefinitions)
+    version: String
+    description: String
+    operationsType: WorkType!
+    hierarchyScope: String
+    billOfMaterial: BillOfMaterial @hasInverse(field:operationsDefinition)
+    segments: [OperationsSegment] @hasInverse(field:operationsDefinition)
+}
+type BillOfMaterial @withSubscription @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    name: String! @id
+    version:String!
+    description:String
+    materialSpecifications:[MaterialSpecification] @hasInverse(field:billOfMaterial)
+    operationsDefinition:OperationsDefinition @hasInverse(field:billOfMaterial)
+}
+type OperationsSegment @withSubscription @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    name:String! @search(by: [hash])
+    version:String
+    type:SegmentType
+    uiComponent:String
+    description:String  @search(by: [hash])
+    parent:OperationsSegment @hasInverse(field:children)
+    children:[OperationsSegment] @hasInverse(field:parent)
+    workType:WorkType @search
+    workDefinitionType:String  @search(by: [hash])
+    duration:Float
+    glAccountWIP:String
+    glAccountWIPInvoice:String
+    glAccountFixedOverhead:String
+    glAccountVariableOverhead:String
+    glAccountDirectLabour:String
+    invoiceSettings:[SegmentInvoiceSetting]
+    costAmountFixedOverhead:Float
+    costDriverFixedOverhead:CostDriver
+    costAmountVariableOverhead:Float
+    costAmountDirectLabourRate:Float
+    durationUoM:UnitOfMeasure
+    orderStartRuleset:OrderStartRuleset @hasInverse(field:segment)
+    materialSpecifications:[MaterialSpecification] @hasInverse(field:operationsSegment)
+    materialEventRuleset:MaterialEventRuleset @hasInverse(field:segment)
+    equipmentSpecifications:[EquipmentSpecification] @hasInverse(field:operationsSegment)
+    stateEventRuleset:StateEventRuleset @hasInverse(field:segment)
+    personnelSpecifications:[PersonnelSpecification] @hasInverse(field:operationsSegment)
+    hierarchyScope: String
+    inflows:[SegmentDependency] @hasInverse(field:to)
+    outflows:[SegmentDependency] @hasInverse(field:from)
+    operationsDefinition:OperationsDefinition @hasInverse(field:segments)
+    jobOrders:[JobOrder] @hasInverse(field:operationsSegment)
+    mpmPlanRate: Float
+    mpmIdealSetupTime: Float
+    mpmIdealChangeoverTime: Float
+    mpmEnableSmartChangeover: Boolean
+    mpmChangeoverFamily: String
+    mpmThresholdRunRate: Float
+    mpmThresholdRunDuration: Float
+    mpmThresholdSlowRate: Float
+    mpmThresholdSlowDuration: Float
+    mpmThresholdMicrostopDuration: Float
+    mpmEnableAutoIdent: Boolean
+    mpmAutoIdentMatchCode:Property
+    positionX:Int
+    positionY:Int
+}
+type TransitionEventRuleset @withSubscription {
+	id: ID!
+	name: String!
+	segmentDependency: SegmentDependency @hasInverse(field:transitionEventRuleset)
+	eventDefs: [EventDefinition] @hasInverse(field:transitionEventRuleset)
+}
+type StateEventRuleset @withSubscription {
+	id: ID!
+	name: String!
+	triggerWhen:[RulesetTriggerOption]
+	segment: OperationsSegment @hasInverse(field:stateEventRuleset)
+	targetState: String!
+	eventDefs: [EventDefinition] @hasInverse(field:stateEventRuleset)
+}
+type MaterialEventRuleset @withSubscription {
+	id: ID!
+	name: String!
+	triggerWhen:[RulesetTriggerOption]
+	segment: OperationsSegment @hasInverse(field:materialEventRuleset)
+	targetMaterial: String!
+	targetMaterialOp: String!
+	eventDefs: [EventDefinition] @hasInverse(field:materialEventRuleset)
+}
+type OrderStartRuleset @withSubscription {
+	id: ID!
+	name: String!
+	segment: OperationsSegment @hasInverse(field:orderStartRuleset)
+	eventDefs: [EventDefinition] @hasInverse(field:orderStartRuleset)
+}
+enum RulesetTriggerOption {
+    ORDER_START
+    ORDER_END
+}
+enum SegmentType {
+    USER_TASK
+    SYSTEM_TASK
+    EMBED_SUBPROCESS
+}
+
+type SegmentInvoiceSetting @key(fields:"id"){
+    id:ID!
+    partner:Partner
+    costPerHour:Float
+    costPerUnit:Float
+}
+type SegmentDependency @withSubscription @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    description:String
+    from:OperationsSegment! @hasInverse(field:outflows)
+    to:OperationsSegment! @hasInverse(field:inflows)
+    dependencyType:DependencyType
+    dependencyFactor:Float
+    factorUoM:UnitOfMeasure
+    condition:String
+    transitionEventRuleset:TransitionEventRuleset @hasInverse(field:segmentDependency)
+}
+enum DependencyType {
+    StartAfterStart
+    StartAfterEnd
+    EndAfterEnd
+    EndAfterStart
+    CanRunParallel
+    CannotRunParallel
+}
+type WorkMaster @withSubscription @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    name:String! @id
+    version:String
+    description:String  @search(by: [hash])
+    parent:WorkMaster @hasInverse(field:children)
+    children:[WorkMaster] @hasInverse(field:parent)
+    workType:WorkType @search
+    workDefinitionType:String  @search(by: [hash])
+    materialSpecifications:[MaterialSpecification] @hasInverse(field:workMaster)
+    equipmentSpecifications:[EquipmentSpecification] @hasInverse(field:workMaster)
+    personnelSpecifications:[PersonnelSpecification] @hasInverse(field:workMaster)
+    duration:Float
+    durationUoM:UnitOfMeasure
+    jobOrders:[JobOrder] @hasInverse(field:workMaster)
+    workDirectives:[WorkDirective] @hasInverse(field:workMaster)
+}
+type WorkDirective @withSubscription @key(fields:"id"){
+    id:ID!
+    name:String! @id
+    version:String
+    description:String  @search(by: [hash])
+    parent:WorkDirective @hasInverse(field:children)
+    children:[WorkDirective] @hasInverse(field:parent)
+    workType:WorkType @search
+    workDefinitionType:String  @search(by: [hash])
+    duration:Float
+    durationUoM:UnitOfMeasure
+    materialSpecifications:[MaterialSpecification] @hasInverse(field:workDirective)
+    equipmentSpecifications:[EquipmentSpecification] @hasInverse(field:workDirective)
+    personnelSpecifications:[PersonnelSpecification] @hasInverse(field:workDirective)
+    isActive:Boolean @search
+    jobOrders:[JobOrder] @hasInverse(field:workDirective)
+    jobResponses:[JobResponse] @hasInverse(field:workDirective)
+    workMaster:WorkMaster @hasInverse(field:workDirectives)
+}
+type JobOrder @withSubscription @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    createdDateTime:DateTime @search
+    name:String! @id @search(by: [hash, regexp])
+    version:String
+    description:String  @search(by: [hash])
+    parent:JobOrder @hasInverse(field:children)
+    children:[JobOrder] @hasInverse(field:parent)
+    workType:WorkType @search
+    workDefinitionType:String  @search(by: [hash])
+    duration:Float
+    durationUoM:UnitOfMeasure
+    workMaster:WorkMaster @hasInverse(field:jobOrders)
+    workDirective:WorkDirective @hasInverse(field:jobOrders)
+    materialSpecifications:[MaterialSpecification] @hasInverse(field:jobOrder)
+    equipmentSpecifications:[EquipmentSpecification] @hasInverse(field:jobOrder)
+    personnelSpecifications:[PersonnelSpecification] @hasInverse(field:jobOrder)
+    scheduledStartDateTime:DateTime @search
+    scheduledEndDateTime:DateTime @search
+    scheduledDuration:Float
+    equipment:Equipment @hasInverse(field:jobOrders)
+    quantity:Float
+    quantityUoM:UnitOfMeasure
+    priority:Int
+    hierarchyScope:String
+    dispatchStatus:DispatchStatus @search(by: [hash])
+    operationsRequest:OperationsRequest @hasInverse(field:jobOrders)
+    operationsSegment:OperationsSegment @hasInverse(field:jobOrders)
+    jobResponses:[JobResponse] @hasInverse(field:jobOrder)
+    jobOrderNotes:[JobOrderNote] @hasInverse(field:jobOrder)
+}
+
+enum DispatchStatus{
+    PENDING
+    ACTIVE
+    PARKED
+    COMPLETE
+    CLOSED
+}
+
+type JobOrderNote {
+    id:ID!
+    comment:String
+    createdDateTime:DateTime
+    editedDateTime:DateTime
+    createdBy:User
+    modifiedBy:User
+    isActive:Boolean
+    jobOrder:JobOrder @hasInverse(field:jobOrderNotes)
+}
+
+type JobResponse @withSubscription @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    createdDateTime:DateTime
+    modifiedDateTime:DateTime
+    workDirective:WorkDirective @hasInverse(field:jobResponses)
+    operator:User
+    equipment:Equipment @hasInverse(field:jobResponses)
+    startDateTime:DateTime @search
+    endDateTime:DateTime @search
+    productionDate:String @search(by: [hash])
+    actualDuration:Float
+    jobOrder:JobOrder @hasInverse(field:jobResponses)
+    events:[EventLog] @hasInverse(field:jobResponse)
+    quantities:[QuantityLog] @hasInverse(field:jobResponse)
+}
+type EventLog @withSubscription @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    jobResponse:JobResponse! @hasInverse(field:events)
+    equipment:Equipment @hasInverse(field:events)
+    startDateTime:DateTime @search
+    endDateTime:DateTime @search
+    duration:Float
+    reasonCode:String @search(by: [hash])
+    reasonText:String @search(by: [hash])
+    reasonCategoryCode:String @search(by: [hash])
+    reasonValue:Float
+    reasonValueUoM:UnitOfMeasure
+    comments:String @search(by: [hash])
+}
+type QuantityLog @withSubscription @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    jobResponse:JobResponse! @hasInverse(field:quantities)
+    equipment:Equipment @hasInverse(field:quantities)
+    type:MaterialUse! @search
+    timestamp:DateTime @search
+    quantity: Float!
+    reasonCode:String @search(by: [hash])
+    reasonText:String @search(by: [hash])
+    comments:String @search(by: [hash])
+}
+
+type EquipmentSpecification @withSubscription @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+     workMaster: WorkMaster @hasInverse(field:equipmentSpecifications)
+     workDirective: WorkDirective @hasInverse(field:equipmentSpecifications)
+     jobOrder: JobOrder @hasInverse(field:equipmentSpecifications)
+     operationsSegment: OperationsSegment @hasInverse(field:equipmentSpecifications)
+     equipment:Equipment @hasInverse(field:workSpecifications)
+     equipmentClass:EquipmentClass
+     description:String
+     quantity:Float
+     uom:UnitOfMeasure
+
+}
+type MaterialSpecification @withSubscription @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+     workMaster: WorkMaster @hasInverse(field:materialSpecifications)
+     workDirective: WorkDirective @hasInverse(field:materialSpecifications)
+     jobOrder: JobOrder @hasInverse(field:materialSpecifications)
+     operationsSegment: OperationsSegment @hasInverse(field:materialSpecifications)
+     billOfMaterial: BillOfMaterial @hasInverse(field:materialSpecifications)
+     material:MaterialDefinition @hasInverse(field:workSpecifications)
+     materialClass:MaterialClass
+     description:String
+     materialUse:MaterialUse!
+     isTracked:Boolean
+     quantity:Float
+     uom:UnitOfMeasure
+}
+type PersonnelSpecification @withSubscription @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+     workMaster: WorkMaster @hasInverse(field:personnelSpecifications)
+     workDirective: WorkDirective @hasInverse(field:personnelSpecifications)
+     jobOrder: JobOrder @hasInverse(field:personnelSpecifications)
+     operationsSegment: OperationsSegment @hasInverse(field:personnelSpecifications)
+     person:Person
+     personnelClass:PersonnelClass
+     description:String
+     personnelUse:String
+     quantity:Float
+     uom:UnitOfMeasure
+
+}
+enum MaterialUse {
+    Initial
+    Produced
+    ByProduct
+    CoProduct
+    Consumable
+    Consumed
+    Transferred
+    Scrap
+    Rework
+    Received
+    Packed
+    Shipped
+}
+type DashboardConfig {
+    id:ID!
+    name:String! @id
+    isActive:Boolean @search
+    panels: [DashboardPanelConfig]
+}
+type DashboardPanelConfig {
+    id:ID!
+    widgetName: String @search(by: [hash])
+    x: Int
+    y: Int
+    w: Int
+    h: Int
+}
+# ################################################################################
+# Start of the Equipment domain entities
+# ################################################################################
+
+type Equipment @withSubscription @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    name : String! @search(by: [hash])
+    label : String @search(by: [hash])
+    displayName : String @search(by: [hash])
+    description : String @search(by: [hash])
+    erpAssetID :String @search(by: [hash])
+    parent: Equipment @hasInverse(field:children)
+    children: [Equipment] @hasInverse(field:parent)
+    equipmentClass: EquipmentClass
+    equipmentLevel: EquipmentElementLevel @search
+    materialEquipment:[MaterialEquipment] @hasInverse(field:equipment)
+    properties: [Property] @hasInverse(field:equipment)
+    propertyNameAliases:[PropertyNameAlias] @hasInverse(field:equipment)
+    carriers:[Carrier] @hasInverse(field:storageLocation)
+    materialSubLots: [MaterialSubLot] @hasInverse(field:storageLocation)
+    transactions:[InventoryTransaction] @hasInverse(field:storageLocation)
+    inventoryHandlingRules:[InventoryHandlingRule] @hasInverse(field:warehouse)
+    dataProvider:DataProvider
+    dataProviderConnection:String
+    addressTemplate:String
+    timeZoneName:String
+    workSpecifications:[EquipmentSpecification] @hasInverse(field:equipment)
+    workflowInstances:[WorkflowInstance] @hasInverse(field:equipment)
+    workCalendar: WorkCalendar @hasInverse(field:equipment)
+    jobResponses:[JobResponse] @hasInverse(field:equipment)
+    jobOrders:[JobOrder] @hasInverse(field:equipment)
+    shipments:[Shipment] @hasInverse(field:warehouse)
+    shipmentItems:[ShipmentItem] @hasInverse(field:bin)
+    Orders:[Order] @hasInverse(field:warehouse)
+    events:[EventLog] @hasInverse(field:equipment)
+    quantities:[QuantityLog] @hasInverse(field:equipment)
+    allowAdhocWorklog:Boolean
+    reasons: [Reason] @hasInverse(field:equipment)
+    reasonOverrides: [EquipmentReasonOverride] @hasInverse(field:equipment)
+    propertyOverrides:[EquipmentPropertyOverride] @hasInverse(field:equipment)
+    mpmEnableJobInterlock:Boolean
+    mpmPermissiveOutputName:String
+    mpmEnableAutoIdentMatching:Boolean
+    mpmAutoIdentMatchSource:String
+    mpmEnableSetupStartDetection:Boolean
+    mpmEnableSetupCloseDetection:Boolean
+    mpmEnableORCWarning:Boolean
+    mpmORCWarnTrigger:mpmORCWarnTriggers
+    mpmEnableORCRevokePermissive:Boolean
+    mpmORCRevokePermissiveTrigger:mpmORCRevokeTriggers
+    mpmEnableORCBlockNextOrder:Boolean
+    mpmEnableCallMaintenanceEvent:Boolean
+    mpmEnableMaintenanceHandover:Boolean
+    mpmEnableManualShiftStart:Boolean
+    mpmEnableManualShiftEnd:Boolean
+    mpmEnableManualBreak:Boolean
+    mpmEnableManualPlannedMaint:Boolean
+    ocsEnabled:Boolean
+    ocsPageState:String
+    ocsWorkflowSelector:String
+    ocsChosenStopTime:DateTime
+}
+################################
+# Additions for mes processing
+#
+type EquipmentNameAlias @withSubscription {
+    id: ID!
+	equipment: Equipment!
+	alias: String! @search(by: [fulltext])
+	system: String! @search(by: [fulltext])
+}
+type PropertyNameAlias @withSubscription {
+    id: ID!
+	property: Property! @hasInverse(field:propertyNameAliases)
+	equipment: Equipment! @hasInverse(field:propertyNameAliases)
+	alias: String! @search(by: [fulltext,hash])
+	system: String! @search(by: [fulltext,hash])
+}
+type PropertyValueAlias @withSubscription {
+    id: ID!
+	property: Property!
+	value: String! @search(by: [fulltext])
+	alias: String! @search(by: [fulltext])
+	system: String! @search(by: [fulltext])
+}
+
+# Enumerations for equipment mpm configuration
+enum mpmORCWarnTriggers {
+    FIFTEEN_MINUTES
+    THIRTY_MINUTES
+    FORTYFIVE_MINUTES
+    SIXTY_MINUTES
+    ORDER_CLOSE
+    BREAK_TIME_START
+    BREAK_TIME_END
+}
+enum mpmORCRevokeTriggers {
+    FIFTEEN_MINUTES
+    THIRTY_MINUTES
+    FORTYFIVE_MINUTES
+    SIXTY_MINUTES
+    ORDER_CLOSE
+    BREAK_TIME_START
+    BREAK_TIME_END
+}
+
+
+"""
+EquipmentReasonOverrides are used to make equipment specific changes to equipment class reasons.
+This allows 'Master Lists' of reasons to be defined on the equipment class and for overrides to the master
+reasons to be made at the equipment level
+"""
+type EquipmentReasonOverride @withSubscription @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    equipment:Equipment @hasInverse(field:reasonOverrides)
+    reason:Reason @hasInverse(field:equipmentOverrides)
+    ignore:Boolean
+    standardValue:Float
+}
+
+"""
+EquipmentClasses are used to manage configuration that is common to a number of similar equipment
+The data properties that an equipment is expected to have are defined on the equipment class
+"""
+type EquipmentClass @withSubscription @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    name : String! @search(by: [hash])
+    label : String @search(by: [hash])
+    displayName : String @search(by: [hash])
+    description : String @search(by: [hash])
+    parent: EquipmentClass @hasInverse(field:children)
+    children: [EquipmentClass] @hasInverse(field:parent)
+    properties: [Property]
+    eventDefinitions: [EventDefinition] @hasInverse(field:equipmentClass)
+    reasons: [Reason] @hasInverse(field:equipmentClass)
+    equipmentLevel: EquipmentElementLevel
+    addressTemplate:String
+    image: String
+    dashboardConfig: DashboardConfig
+}
+
+enum DataType {
+    BOOL
+    INT
+    INT32
+    FLOAT64
+    FLOAT
+    STRING
+}
+"""
+Data Providers are the client libraries that have been implemented in the edge agent.
+We need to make these plugins that that the library can be extended easily.
+At the moment, MQTT is all we have. We will add OPC-UA next
+"""
+enum DataProvider {
+    MQTT
+    OPCUA
+}
+enum EquipmentElementLevel {
+    Enterprise
+    Site
+    Area
+    ProcessCell
+    Unit
+    ProductionLine
+    WorkCell
+    ProductionUnit
+    Warehouse
+    StorageZone
+    StorageUnit
+    WorkCenter
+    WorkUnit
+    EquipmentModule
+    ControlModule
+    Other
+}
+"""
+
+"""
+type Property @withSubscription @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    type: PropertyType @search(by: [hash])
+    name: String! @search(by: [hash])
+    description: String! @search(by: [hash])
+    dataType: DataType
+    definedBy: Property
+    address:String
+    expression:String
+    value:String
+    unitOfMeasure:UnitOfMeasure
+    storeHistory:Boolean
+    isTestedBy:[TestSpecification]
+    equipment:Equipment @hasInverse(field:properties)
+    equipmentClass:EquipmentClass @hasInverse(field:properties)
+    propertyOverrides:[EquipmentPropertyOverride] @hasInverse(field:property)
+    propertyNameAliases:[PropertyNameAlias] @hasInverse(field:property)
+
+}
+enum PropertyType {
+    BOUND
+    CALCULATED
+    REFERENCED
+}
+type EquipmentPropertyOverride @withSubscription @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    equipment: Equipment! @hasInverse(field:propertyOverrides)
+    property: Property! @hasInverse(field:propertyOverrides)
+    address:String
+    expression:String
+    value:String
+    storeHistory:Boolean
+    ignore:Boolean
+}
+"""
+Multiple equipment events can be defined for an Equipment Template.
+"""
+type EventDefinition @withSubscription @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    name: String! @search(by: [hash])
+    messageClass: MessageClass!
+    triggerProperties:[Property]
+    triggerExpression:String!
+    delayOption: Boolean
+    delayTime: Int
+    payloadProperties:[Property]
+    payloadFields:[PayloadFieldDefinition]
+    orderStartRuleset:OrderStartRuleset @hasInverse(field:eventDefs)
+    stateEventRuleset:StateEventRuleset @hasInverse(field:eventDefs)
+    materialEventRuleset:MaterialEventRuleset @hasInverse(field:eventDefs)
+    transitionEventRuleset:TransitionEventRuleset @hasInverse(field:eventDefs)
+    equipmentClass:EquipmentClass @hasInverse(field:eventDefinitions)
+}
+type PayloadFieldDefinition @withSubscription @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    name: String!
+    expression: String!
+    fieldType: PayloadFieldType
+}
+
+enum PayloadFieldType{
+    Tag
+    Field
+    Other
+}
+
+type Reason @withSubscription @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    class: ReasonClass! @search(by: [hash])
+    category: ReasonCategory @hasInverse(field:reason)
+    label: String! @search(by: [hash])
+    text: String! @search(by: [hash])
+    erpCode: String! @search(by: [hash])
+    standardValue: Float
+    valueUoM:UnitOfMeasure
+    parent: Reason @hasInverse(field:children)
+    children: [Reason] @hasInverse(field:parent)
+    equipmentClass:EquipmentClass @hasInverse(field:reasons)
+    equipment:Equipment @hasInverse(field:reasons)
+    equipmentOverrides:[EquipmentReasonOverride] @hasInverse(field:reason)
+}
+
+enum ReasonClass {
+    Time
+    Scrap
+}
+
+enum MessageClass {
+    EventLog
+    QuantityLog
+    PerformanceLog
+    AttendanceLog
+    JobRequest
+    JobResponse
+}
+
+enum MachineState {
+    Stopped
+    Resetting
+    Idle
+    Starting
+    Execute
+    UnHolding
+    Held
+    Holding
+    Completing
+    Complete
+    UnSuspending
+    Suspended
+    Suspending
+    Aborting
+    Aborted
+    Cleaning
+    Stopping
+}
+type ReasonCategory @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    reason: [Reason] @hasInverse(field:category)
+    code:String! @id
+    timeCategory:TimeCategory!
+}
+"""
+Time Category abbreviations are defined in ISO 22400 and are used
+to calculate the ISO standard KPI
+"""
+enum TimeCategory {
+"""
+APT is the actual production time is the time during a work unit is producing. It includes only the value-adding functions.
+"""
+	APT
+"""
+AUST is the actual setup time is the time actually consumed for the preparation of an order at a work unit.
+"""
+	AUST
+"""
+ADET is the actual unit delay times are actual times associated with malfunction-caused interrupts, minor stoppages,
+and other unplanned time intervals that occur while tasks are being completed that lead to unwanted extension
+of the order processing time
+"""
+	ADET
+"""
+ADOT is the actual unit down time is the time when the work unit is not running with orders, although it is available.
+"""
+	ADOT
+"""
+PSDT is the time in which the work unit is planned to be out of operation
+"""
+	PSDT
+"""
+PDOT is time, included in the planned operation time, in which the work unit is planned for no operations within the operation time period
+"""
+	PDOT
+"""
+TTR is the time interval during which an item is in a down state due to a failure (IEC 60050-191)
+"""
+	TTR
+}
+
+
+
+# ################################################################################
+# Start of the material domain entities
+# ################################################################################
+"""
+A unique identification of a specific material class, within the scope
+of the information exchanged (production capability, production
+schedule, production performance, …)
+The ID shall be used in other parts of the model when the material
+class needs to be identified, such as the production capability for
+this material class, or a production response identifying the
+material class used.
+"""
+type MaterialClass @withSubscription  @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    code:String! @id
+    description:String
+    properties:[Property]
+    scheduleSortOrder:Int
+    parent: MaterialClass @hasInverse(field:children)
+    children: [MaterialClass] @hasInverse(field:parent)
+    inventoryHandlingPolicy: InventoryHandlingPolicy @hasInverse(field:materialClass)
+}
+type MaterialDefinition @withSubscription @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    code:String! @id
+    name:String @search(by: [hash])
+    materialClass:MaterialClass
+    description:String
+    properties:[Property]
+    scheduleSortOrder:Int
+    baseUnitOfMeasure:UnitOfMeasure!
+    uomConversions:[UnitOfMeasureConversion] @hasInverse(field:material)
+    workSpecifications:[MaterialSpecification] @hasInverse(field:material)
+    operationsDefinitions:[OperationsDefinition] @hasInverse(field:material)
+    sublots:[MaterialSubLot] @hasInverse(field:material)
+    units:[MaterialUnit] @hasInverse(field:material)
+    events:[InventoryTransaction] @hasInverse(field:material)
+    value:Float
+    valueCurrency:String
+    weightKG:Float
+    supplier:String
+    serialMask:String
+    inventoryHandlingPolicy:InventoryHandlingPolicy
+    alternates:[MaterialAlternate] @hasInverse(field:material)
+    materialEquipment:[MaterialEquipment] @hasInverse(field:material)
+    shipmentItems:[ShipmentItem] @hasInverse(field:material)
+    OrderLines:[OrderLine] @hasInverse(field:material)
+    transferrableMaterials: [MaterialDefinition]
+    customerMaterialCode: String @search(by: [hash])
+}
+type MaterialAlternate @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    material:MaterialDefinition! @hasInverse(field:alternates)
+    alternateMaterial:MaterialDefinition!
+    effectiveDateTime:DateTime!
+    priorityOrder:Int!
+}
+type Carrier @key(fields:"id") {
+    id:ID!
+    code:String! @id
+    isActive:Boolean @search
+    storageLocation:Equipment! @hasInverse(field:carriers)
+    status:MaterialStatus!
+    barcodeImage:String
+    owner: Partner @hasInverse(field:carriers)
+    subLots:[MaterialSubLot] @hasInverse(field:carrier)
+    events:[InventoryTransaction] @hasInverse(field:carrier)
+}
+type MaterialLot @withSubscription @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    code:String! @id
+    description:String
+}
+type MaterialSubLot @withSubscription  @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    code:String! @id
+    material:MaterialDefinition! @hasInverse(field:sublots)
+    description:String
+    status:MaterialStatus!
+    carrier:Carrier @hasInverse(field:subLots)
+    storageLocation:Equipment  @hasInverse(field:materialSubLots)
+    quantity:String
+    dataType:DataType
+    unitOfMeasure:UnitOfMeasure
+    properties:[Property]
+    events:[InventoryTransaction] @hasInverse(field:materialSubLot)
+}
+type MaterialUnit @withSubscription @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    serialNumber:String! @id @search(by: [hash])
+    material:MaterialDefinition! @hasInverse(field:units)
+    properties:[Property]
+    events:[InventoryTransaction] @hasInverse(field:materialUnit)
+}
+"""
+A movement of material. The Inventory Transaction represents an immutable ledger of entries.
+Most transactions will record 2 entries with the same transactionId, a debit and a credit like
+a financial ledger.
+All transactions should be added through the custom mutation, so we disable the automatically generated mutations.
+"""
+type InventoryTransaction @key(fields:"id") {
+    id:ID!
+    transactionId:String! @search(by: [hash])
+    user:User
+    owner:Partner
+    previous:InventoryTransaction @hasInverse(field:next)
+    next:InventoryTransaction @hasInverse(field:previous)
+    timestamp:DateTime!
+    effectiveTimestamp:DateTime!
+    materialSubLot:MaterialSubLot @hasInverse(field:events)
+    materialUnit:MaterialUnit @hasInverse(field:events)
+    carrier:Carrier @hasInverse(field:events)
+    status:MaterialStatus!
+    storageLocation:Equipment @hasInverse(field:transactions)
+    material:MaterialDefinition! @hasInverse(field:events)
+    materialUse:MaterialUse!
+    shipmentItem:ShipmentItem @hasInverse(field:transactions)
+    quantity:Float!
+}
+
+type MaterialEquipment  @key(fields:"id"){
+    id:ID!
+    key:String! @id @search(by: [hash])
+    isActive:Boolean @search
+    material:MaterialDefinition! @hasInverse(field:materialEquipment)
+    equipment:Equipment! @hasInverse(field:materialEquipment)
+    inventoryMax: Int
+    inventoryMin: Int
+    sortOrder: Int
+}
+type UnitOfMeasure @withSubscription @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    code:String! @id
+    dataType:DataType
+}
+type UnitOfMeasureConversion @withSubscription @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    fromUoM:UnitOfMeasure!
+    toUoM:UnitOfMeasure!
+    numerator:Float!
+    denominator:Float!
+    material:MaterialDefinition! @hasInverse(field:uomConversions)
+}
+type MaterialStatus @withSubscription @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    code:String! @id @search(by: [hash])
+}
+type MaterialStateModel @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    name:String! @id @search(by: [hash])
+    states:[MaterialStateTransition!]!
+    inventoryHandlingRules:[InventoryHandlingRule] @hasInverse(field:stateModel)
+}
+type MaterialStateTransition @key(fields:"id") {
+    id:ID!
+    status: MaterialStatus! 
+    to: [MaterialStatus]
+    canReceive:Boolean @search
+    canPack:Boolean @search
+}
+
+# ################################################################################
+# Start of the Personnel domain entities
+# ################################################################################
+"""
+Personnel Class represents a grouping of personnel with similar characteristics
+"""
+type PersonnelClass @withSubscription @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    name:String! @id
+    description:String
+    properties:[Property]
+    persons:[Person] @hasInverse(field:memberOf)
+    isTestedBy:[TestSpecification]
+}
+type Person @withSubscription  @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    name:String! @id
+    description:String
+    properties:[Property]
+    memberOf:[PersonnelClass] @hasInverse(field:persons)
+}
+type TestSpecification @withSubscription @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    description:String
+    version:String
+}
+type TestResult @withSubscription @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    description:String
+    result:String
+    uom:UnitOfMeasure
+    testDateTime:DateTime
+}
+
+# ################################################################################
+# Start of the work calendar domain entities
+# ################################################################################
+"""
+Work Calendar domain describes the definition of shift patterns and non-working days
+The Work Calendar Definition defines the rule used to determine work calendar entries.
+It contains the recurrence time for the rule, the duration of the entry, the entry type, and properties associated with the entry.
+Standard Entry Types include Working Time and Non-Working Time. The entry may include property definitions.
+The definition uses the rrule.js library to generate calendar events, and the fields available match
+the configuration fields required by rrule.js
+"""
+type WorkCalendarDefinitionEntry @withSubscription @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    description:String
+    hierarchyScope:Equipment
+    freq:Frequency!
+    startDateTime:DateTime!
+    endDateTime:DateTime
+    count:Int
+    interval:Int
+    wkst:Weekday
+    byWeekDay:[Weekday]
+    byMonth:[Int]
+    bySetPos:[Int]
+    byMonthDay:[Int]
+    byYearDay:[Int]
+    byWeekNo:[Int]
+    byHour:[Int]
+    byMinute:[Int]
+    bySecond:[Int]
+    duration:String
+    entryType:WorkCalendarEntryType!
+    properties:[Property]
+    calendarEntries:[WorkCalendarEntry] @hasInverse(field:definition)
+    workCalendar:WorkCalendar @hasInverse(field:definition)
+}
+enum Frequency {
+    YEARLY
+    MONTHLY
+    WEEKLY
+    DAILY
+    HOURLY
+    MINUTELY
+    SECONDLY
+}
+enum Weekday {
+    MO
+    TU
+    WE
+    TH
+    FR
+    SA
+    SU
+}
+
+type WorkCalendarEntry @withSubscription @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    description:String
+    definition:WorkCalendarDefinitionEntry @hasInverse(field:calendarEntries)
+    hierarchyScope:Equipment
+    startDateTime:DateTime! @search
+    finishDateTime:DateTime! @search
+    entryType:WorkCalendarEntryType! @search
+    properties:[Property]
+    workCalendar:WorkCalendar @hasInverse(field:entries)
+}
+type WorkCalendar @withSubscription @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    name:String! @id
+    description:String
+    definition:[WorkCalendarDefinitionEntry] @hasInverse(field:workCalendar)
+    entries:[WorkCalendarEntry] @hasInverse(field:workCalendar)
+    equipment:[Equipment] @hasInverse(field:workCalendar)
+}
+enum WorkCalendarEntryType {
+    PlannedBusyTime
+    PlannedDowntime
+    PlannedShutdown
+}
+
+# ################################################################################
+# Start of the workflow  domain entities
+# ################################################################################
+
+type WorkflowSpecification @withSubscription  @key(fields:"id"){
+    id:ID!
+    access:[ACL]
+    isActive:Boolean @search
+    createdDateTime:DateTime
+    createdBy:User
+    modifiedDateTime:DateTime
+    modifiedBy:User
+    name:String!
+    description:String!
+    nodes:[WorkflowNode] @hasInverse(field:workflowSpecification)
+    connections:[WorkflowConnection] @hasInverse(field:workflowSpecification)
+    instances:[WorkflowInstance] @hasInverse(field:workflowSpecification)
+}
+type WorkflowInstance @withSubscription  @key(fields:"id"){
+    id:ID!
+    createdDateTime:DateTime
+    createdBy:User
+    modifiedDateTime:DateTime
+    modifiedBy:User
+    status:WorkflowNodeStatus @search
+    workflowSpecification:WorkflowSpecification @hasInverse(field:instances)
+    equipment:Equipment @hasInverse(field:workflowInstances)
+    parent:WorkflowInstance @hasInverse(field:children)
+    children:[WorkflowInstance] @hasInverse(field:parent)
+    nodeInstances:[WorkflowNodeInstance] @hasInverse(field:workflowInstance)
+    propertyInstances:[WorkflowPropertyInstance] @hasInverse(field:workflowInstance)
+    properties:[WorkflowInstanceProperty] @hasInverse(field:workflowInstance)
+    orderLines:[OrderLine] @hasInverse(field:workflowInstance)
+}
+type WorkflowInstanceProperty @withSubscription @key(fields:"id"){
+    id:ID!
+    key:String! @id
+    workflowInstance:WorkflowInstance @hasInverse(field:properties)
+    name:String!
+    values:[WorkflowPropertyValue]
+}
+type WorkflowNode @withSubscription @key(fields:"id") {
+    id:ID!
+    access:[ACL]
+    isActive:Boolean @search
+    createdDateTime:DateTime
+    createdBy:User
+    modifiedDateTime:DateTime
+    modifiedBy:User
+    name:String!
+    description:String!
+    uiComponent:String
+    form:Form @hasInverse(field:workflowNodes)
+    role:Role @hasInverse(field:workflowNodes)
+    nodeType:WorkflowNodeType! @hasInverse(field:nodes)
+    inflows:[WorkflowConnection] @hasInverse(field:to)
+    outflows:[WorkflowConnection] @hasInverse(field:from)
+    workflowSpecification:WorkflowSpecification! @hasInverse(field:nodes)
+    properties:[WorkflowProperty] @hasInverse(field:node)
+    nodeInstances:[WorkflowNodeInstance] @hasInverse(field:node)
+    positionX:Int
+    positionY:Int
+    width:Int
+    height:Int
+}
+type WorkflowNodeInstance @withSubscription  @key(fields:"id"){
+    id:ID!
+    access:[ACL]
+    isActive:Boolean @search
+    createdDateTime:DateTime
+    createdBy:User
+    modifiedDateTime:DateTime
+    modifiedBy:User
+    status:WorkflowNodeStatus @search
+    assignedUser:User @hasInverse(field:tasks)
+    workflowInstance:WorkflowInstance! @hasInverse(field:nodeInstances)
+    node:WorkflowNode! @hasInverse(field:nodeInstances)
+    events:[WorkflowNodeEvent] @hasInverse(field:nodeInstance)
+}
+type WorkflowNodeEvent @withSubscription  @key(fields:"id"){
+    id:ID!
+    access:[ACL]
+    isActive:Boolean @search
+    createdDateTime:DateTime
+    createdBy:User
+    modifiedDateTime:DateTime
+    modifiedBy:User
+    nodeInstance:WorkflowNodeInstance @hasInverse(field:events)
+    previous:WorkflowNodeEvent @hasInverse(field:next)
+    next:WorkflowNodeEvent @hasInverse(field:previous)
+    status:WorkflowNodeStatus @search
+    isProcessed: Boolean @search
+    value:String
+}
+enum WorkflowNodeStatus {
+    CREATED
+    CLAIMED
+    STARTED
+    PAUSED
+    COMPLETED
+}
+type WorkflowNodeType @withSubscription  @key(fields:"id"){
+    id:ID!
+    access:[ACL]
+    isActive:Boolean @search
+    createdDateTime:DateTime
+    createdBy:User
+    modifiedDateTime:DateTime
+    modifiedBy:User
+    name:String!
+    description:String!
+    nodeClass:WorkflowNodeClass!
+    nodes:[WorkflowNode] @hasInverse(field:nodeType)
+    properties:[WorkflowProperty] @hasInverse(field:nodeType)
+}
+enum WorkflowNodeClass {
+    EVENT_START
+    EVENT_END
+    EVENT_INTERMEDIATE
+    GATEWAY
+    TASK_USER
+    TASK_SYSTEM
+    SUBPROCESS
+}
+type WorkflowConnection @withSubscription @key(fields:"id") {
+    id:ID!
+    access:[ACL]
+    isActive:Boolean @search
+    createdDateTime:DateTime
+    createdBy:User
+    modifiedDateTime:DateTime
+    modifiedBy:User
+    connectionType:WorkflowConnectionType! @hasInverse(field:connections)
+    workflowSpecification:WorkflowSpecification! @hasInverse(field:connections)
+    from:WorkflowNode! @hasInverse (field:outflows)
+    to:WorkflowNode! @hasInverse (field:inflows)
+    condition:String
+    properties:[WorkflowProperty] @hasInverse(field:connection)
+}
+type WorkflowConnectionType @withSubscription  @key(fields:"id"){
+    id:ID!
+    access:[ACL]
+    isActive:Boolean @search
+    createdDateTime:DateTime
+    createdBy:User
+    modifiedDateTime:DateTime
+    modifiedBy:User
+    name:String!
+    description:String!
+    connections:[WorkflowConnection] @hasInverse(field:connectionType)
+    properties:[WorkflowProperty] @hasInverse(field:connectionType)
+}
+type WorkflowProperty @withSubscription @key(fields:"id") {
+    id:ID!
+    access:[ACL]
+    isActive:Boolean @search
+    createdDateTime:DateTime
+    createdBy:User
+    modifiedDateTime:DateTime
+    modifiedBy:User
+    propertyType:WorkflowPropertyType!
+    name:String! @search(by: [hash])
+    description: String! @search(by: [hash])
+    definedBy:WorkflowProperty
+    dataType: DataType
+    unitOfMeasure:UnitOfMeasure
+    value:String
+    nodeType:WorkflowNodeType @hasInverse(field:properties)
+    node:WorkflowNode @hasInverse(field:properties)
+    connectionType:WorkflowConnectionType @hasInverse(field:properties)
+    connection:WorkflowConnection @hasInverse(field:properties)
+    instances:[WorkflowPropertyInstance] @hasInverse(field:workflowProperty)
+}
+type WorkflowPropertyInstance @withSubscription @key(fields:"id") {
+    id:ID!
+    access:[ACL]
+    isActive:Boolean @search
+    createdDateTime:DateTime
+    createdBy:User
+    modifiedDateTime:DateTime
+    modifiedBy:User
+    workflowInstance:WorkflowInstance @hasInverse(field:propertyInstances)
+    workflowProperty:WorkflowProperty @hasInverse(field:instances)
+    values:[WorkflowPropertyValue] @hasInverse(field:propertyInstance)
+}
+type WorkflowPropertyValue @withSubscription @key(fields:"id") {
+    id:ID!
+    createdDateTime:DateTime
+    createdBy:User
+    modifiedDateTime:DateTime
+    modifiedBy:User
+    propertyInstance:WorkflowPropertyInstance!
+    value:String
+    previous:WorkflowPropertyValue @hasInverse(field:next)
+    next:WorkflowPropertyValue @hasInverse(field:previous)
+}
+enum WorkflowPropertyType {
+    STATIC
+    CONFIG
+    VARIABLE
+}
+type Form @withSubscription @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    name:String! @id
+    workflowNodes:[WorkflowNode] @hasInverse(field:form)
+    jsonSchema:String
+    uiSchema:String
+}
+# ################################################################################
+# Start of the Warehouse Management Entities
+# ################################################################################
+type ASNStaging  @key(fields:"id"){
+    id:ID!
+    orderNumber:String! @search(by: [fulltext])
+    materialCode:String! @search(by: [fulltext])
+    serialNumber:String @search(by: [fulltext])
+    quantity:Int!
+    isValid:Boolean
+    errorDescription:String
+    workflowInstanceId:String! @search(by: [hash])
+}
+type Partner  @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    companyCode:String!   @search(by: [hash])
+    name:String   @search(by: [hash])
+    vatNumber:String
+    registrationNumber:String
+    contactName:String
+    contactEmail:String
+    contactPhone:String
+    shippingAddress:Address
+    billingAddress:Address
+    isMerchant:Boolean @search
+    isRepairer:Boolean @search
+    isSupplier:Boolean @search
+    isTransport:Boolean @search
+    isCustomer:Boolean @search
+    isInventoryOwner:Boolean @search
+    carriers: [Carrier] @hasInverse(field:owner)
+    fromOrders: [Order] @hasInverse(field:shipFromPartner)
+    toOrders: [Order] @hasInverse(field:shipToPartner)
+}
+enum StockType{
+    NEW_STOCK
+    REPAIRED
+    RETURNED
+}
+type InventoryHandlingPolicy  @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    name:String! @id @search(by: [hash])
+    materialClass:[MaterialClass] @hasInverse(field:inventoryHandlingPolicy)
+    verifySerialNumberOnReceipt: Boolean
+    verifySerialNumberOnPacking: Boolean
+    trackBySerialNumber: Boolean
+    trackByCarrier:Boolean
+    rules:[InventoryHandlingRule] @hasInverse(field:inventoryHandlingPolicy)
+}
+type InventoryHandlingRule @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    customer:Partner!
+    stockType:StockType! @search(by: [hash])
+    warehouse:[Equipment!]! @hasInverse(field:inventoryHandlingRules)
+    stateModel:MaterialStateModel! @hasInverse(field:inventoryHandlingRules)
+    inventoryHandlingPolicy:InventoryHandlingPolicy! @hasInverse(field:rules)
+}
+type Address  @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    name:String @search(by: [hash])
+    street1: String
+    street2: String
+    number: String
+    city: String
+    state: String
+    postCode: String
+    countryCode: String
+}
+
+type Delivery @key(fields:"id") {
+    id: ID!
+    dateTime: DateTime!
+    shipments: [Shipment]
+    location: Equipment
+    operator: User
+    transportCompany: TransportCompany
+}
+
+"""
+An outbound Sales Order to be fulfilled
+"""
+type Order  @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    orderType:OrderType! @search
+    customerOrderNumber:String @search(by: [hash, fulltext])
+    customerReference:String
+    deliveryTerms:IncoTerms
+    status:OrderStatus!
+    shipFromPartner:Partner
+    shipToPartner:Partner
+    invoiceFromPartner:Partner
+    invoiceToPartner:Partner
+    warehouse:Equipment @hasInverse(field:Orders)
+    lines:[OrderLine] @hasInverse(field:order)
+    shipments:[Shipment] @hasInverse(field:order)
+    notes:String
+    createdDateTime:DateTime
+}
+enum OrderType {
+    SALES_ORDER
+    RETURN_ORDER
+    REPLACE_ORDER
+    REPAIR_ORDER
+    PURCHASE_ORDER
+}
+type OrderLine @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    order:Order @hasInverse(field:lines)
+    orderLineNumber:Int!
+    material:MaterialDefinition! @hasInverse(field:OrderLines)
+    quantity:Int!
+    defectiveSerialNumbers:String
+    isReturn:Boolean
+    workflowInstance:WorkflowInstance @hasInverse(field:orderLines)
+}
+enum IncoTerms {
+    DAP
+    DDP
+    CPT
+}
+enum OrderStatus {
+    CREATED
+    RECEIVED
+    PACKED
+    SHIPPED
+    DELIVERED
+    COMPLETE
+}
+
+"""
+A shipment represents a consignment of goods being sent or received into a warehouse
+"""
+type Shipment @key(fields:"id") {
+    id:ID!
+    isActive:Boolean @search
+    type:ShipmentType! @search(by: [hash])
+    transportCompany:TransportCompany
+    transportCompanyShipmentId:String
+    transportCompanyProductCode:String
+    reference:String @search(by: [hash, regexp])
+    items:[ShipmentItem] @hasInverse(field:shipment)
+    customerReference:String
+    emailTrackingEnabled:Boolean
+    from:Address
+    to:Address
+    order:Order! @hasInverse(field:shipments)
+    warehouse:Equipment! @hasInverse(field:shipments)
+    consignmentNumber: String @search (by: [hash, fulltext])
+    properties:[Property]
+    dateTimeReceivedUTC:DateTime @search
+    dateTimeDeliveredUTC:DateTime @search
+    dateTimePackedUTC:DateTime @search
+    dateTimeCreatedUTC:DateTime @search
+    delivered: Delivery @hasInverse(field:shipments)
+ }
+enum ShipmentType {
+    INBOUND
+    OUTBOUND
+    RETURN
+}
+"""
+A shipment item represents an individual package or line item within the shipment
+"""
+type ShipmentItem  @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    transportCompanyItemReference:String
+    transportCompanyItemId:String
+    trackingDetailsArticleId:String
+    trackingDetailsBarcodeId:String
+    trackingDetailsConsignmentId:String
+    shipment:Shipment @hasInverse(field:items)
+    status:ShipmentItemStatus!
+    material:MaterialDefinition @hasInverse(field:shipmentItems)
+    transactions:[InventoryTransaction] @hasInverse(field:shipmentItem)
+    plannedQuantity:Int
+    isParcel:Boolean @search
+    bin:Equipment @hasInverse(field:shipmentItems)
+    box:Box
+    weightKg:Float
+}
+type Box {
+    id:ID!
+    name:String
+    sizeHeightCm:Int
+    sizeWidthCm:Int
+    sizeDepthCm:Int
+}
+
+enum ShipmentItemStatus {
+    CREATED
+    PACKED
+    SHIPPED
+    DELIVERED
+    DELETED
+}
+"""
+ Companies that we have API integration with should be listed here.
+ Manual is used to indicate that no API is available.
+"""
+enum TransportCompany {
+    AUSPOST
+    MANUAL
+}
+
+type GeneralLedgerAccount {
+    id:ID!
+    code:String! @id
+    name:String
+    type:String
+}
+enum CostDriver {
+    PER_HOUR
+    PER_UNIT
+}
+
+
+# Dgraph.Secret Content-type "application/json"
+# Dgraph.Authorization {"VerificationKey":"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuuqKn/ZWMeXewpSWQ6nK\ne/xavJ7zrRszqpyo8Ln/AwwYJbhcwMucZCPepkAI3G0QIN9W67uIsVvjjFORfjwv\nUEftkfDQpI5FwE9KWnla3QZZn8Yko/KI6xAtm9VT+YdhoaXo5KdOR7gGRsMLHXf9\npvk60mcUIo9gqRXyl9p9L1UDP582dKEdEw+jrjYyXy42DFUSw0Fopn9rtbH2SYRv\n5DerB+LBAtA4SrBd6ro/S06Sk5O3dUL1xY+LNLR5WQI6E3RrgW8tbx9LOtBQU9sk\nqHrOOHBR0TxPqz9PIYVOiumD2jlrU7BkvRoWXqQlZg3Cvt5cdLH98Cqt4kZadJM4\n0QIDAQAB\n-----END PUBLIC KEY-----","Header":"X-Auth0-Token","Namespace":"https://libre.spruik.ai/jwt/claims","Algo":"RS256","Audience":["Ulv2gRrq4BJBBoCPkJucDSaO3bgCRMvA"]}

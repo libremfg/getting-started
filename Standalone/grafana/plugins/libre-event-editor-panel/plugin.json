@@ -1,0 +1,42 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json",
+  "type": "panel",
+  "name": "libre-event-editor-table-panel",
+  "id": "libre-event-editor-table-panel",
+  "info": {
+    "description": "Libre Grafana Panel to assign Downtime Event Reasons",
+    "author": {
+      "name": "Tom Hollingworth",
+      "url": "http://www.libremfg.com/"
+    },
+    "keywords": [
+      "panel",
+      "grafana",
+      "libre",
+      "manufacturing",
+      "industry-4",
+      "industry-40"
+    ],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [
+      {
+        "name": "Website",
+        "url": "https://github.com/grafana/grafana-starter-panel"
+      },
+      {
+        "name": "License",
+        "url": "https://github.com/grafana/grafana-starter-panel/blob/master/LICENSE"
+      }
+    ],
+    "screenshots": [],
+    "version": "1.0.0",
+    "updated": "2021-10-07"
+  },
+  "dependencies": {
+    "grafanaDependency": ">=7.0.0",
+    "plugins": []
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "type": "datasource",
+  "name": "GraphQL Data Source",
+  "id": "fifemon-graphql-datasource",
+  "metrics": true,
+  "annotations": true,
+
+  "info": {
+    "description": "GraphQL Data Source",
+    "author": {
+      "name": "Kevin Retzke"
+    },
+    "keywords": ["GraphQL"],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [
+      { "name": "Website", "url": "https://github.com/fifemon/graphql-datasource" },
+      { "name": "License", "url": "https://github.com/fifemon/graphql-datasource/blob/master/LICENSE" }
+    ],
+    "screenshots": [
+      { "name": "DeutscheBahn Arrivals", "path": "img/db_arrivals.png"},
+      { "name": "DeutscheBahn Arrivals Annotations", "path": "img/db_arrivals_annotations.png"},
+      { "name": "GitHub Security Advisories", "path": "img/github_security_advisories.png"}
+    ],
+    "version": "1.3.0",
+    "updated": "2021-03-16"
+  },
+
+  "dependencies": {
+    "grafanaVersion": "7.x.x",
+    "grafanaDependency": ">=7.0.0",
+    "plugins": []
+  }
+}

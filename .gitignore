@@ -1,0 +1,8 @@
+.DS_Store
+.idea
+Standalone/alpha/data/*
+Standalone/zero/data/*
+Standalone/influxdb/data/*
+Standalone/ACCESS_KEYS.txt
+
+

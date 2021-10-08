@@ -1,0 +1,33 @@
+{
+  "$schema": "https://github.com/grafana/grafana/raw/main/docs/sources/developers/plugins/plugin.schema.json",
+  "type": "panel",
+  "name": "Gantt",
+  "id": "marcusolsson-gantt-panel",
+  "info": {
+    "description": "Tasks and processes over time",
+    "author": {
+      "name": "Marcus Olsson"
+    },
+    "keywords": ["panel", "gantt"],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [
+      { "name": "Website", "url": "https://github.com/marcusolsson/grafana-gantt-panel" },
+      { "name": "License", "url": "https://github.com/marcusolsson/grafana-gantt-panel/blob/main/LICENSE" }
+    ],
+    "screenshots": [
+      { "name": "Gantt (Dark)", "path": "img/dark.png" },
+      { "name": "Gantt (Light)", "path": "img/light.png" }
+    ],
+    "version": "0.7.4",
+    "updated": "2021-09-05"
+  },
+
+  "dependencies": {
+    "grafanaDependency": ">=7.3.0",
+    "grafanaVersion": "7.3.0",
+    "plugins": []
+  }
+}

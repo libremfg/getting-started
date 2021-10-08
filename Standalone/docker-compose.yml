@@ -1,0 +1,247 @@
+# This Docker Compose file can be used to quickly bootup Dgraph Zero
+# and Alpha in different Docker containers.
+
+# It mounts /tmp/data on the host machine to /dgraph within the
+# container. You can change /tmp/data to a more appropriate location.
+# Run `docker-compose up` to start Dgraph.
+
+version: "3.2"
+services:
+  zero:
+    image: dgraph/dgraph:v21.03.1
+#    volumes:
+#      - ./zero/data:/dgraph
+    ports:
+      - 5080:5080
+      - 6080:6080
+    restart: on-failure
+    command: dgraph zero --my=zero:5080
+    container_name: zero
+  alpha:
+    image: dgraph/dgraph:v21.03.1
+#    volumes:
+#      - ./alpha/data:/dgraph
+    ports:
+      - 8080:8080
+      - 9080:9080
+#    env_file:
+#      - ACCESS_KEYS.txt
+    restart: on-failure
+    command: dgraph alpha --my=alpha:7080 --zero=zero:5080  --security whitelist=0.0.0.0/0
+    container_name: alpha
+    healthcheck:
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      test: ["CMD", "curl", "-f", "http://alpha:8080/admin"]
+  ratel:
+    image: dgraph/dgraph:v20.11.3
+    ports:
+      - 8000:8000
+    command: dgraph-ratel
+  libre-ui:
+    image:  ghcr.io/spruik/libre-admin-ui:main
+    ports:
+      - 80:80
+    environment:
+      - AUTH0_DOMAIN=demo-libremfg.us.auth0.com
+      - AUTH0_CLIENT_ID=cEye379jRD9TCroW6LRwsNf7LQkMYOBj
+      - GRAPHQL_ENDPOINT=http://localhost:4000/graphql
+      - GRAPHQL_SUBSCRIPTION_ENDPOINT=ws://localhost:8080/graphql
+      - MQTT_USERNAME=admin
+      - MQTT_PASSWORD=public
+      - MQTT_URL=localhost
+      - MQTT_PORT=8083
+    depends_on:
+      - "influxdb"
+      - "mqtt"
+      - "alpha"
+      - "zero"
+  mqtt:
+    image:  emqx/emqx:4.3.8
+    ports:
+      - 1883:1883
+      - 8083:8083
+      - 18083:18083
+    restart: always
+    container_name: mqtt
+    healthcheck:
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      test: ["CMD", "curl", "-f", "http://mqtt:18083"]
+  libre-server:
+    image: ghcr.io/spruik/libre-server:0.0.4
+    restart: always
+    ports:
+      - 4001:80
+    environment:
+      - LIBRE_DQL_URL=alpha:9080
+      - LIBRE_GRAPHQL_ENDPOINT=http://alpha:8080/graphql
+      - INFLUX_TOKEN=mytokenmytokenmytoken
+      - INFLUX_ORG=Libre
+      - INFLUX_BUCKET=Libre
+      - INFLUX_URL=http://influxdb:8086
+    volumes:
+      - ./libre-server/config:/etc/config
+    depends_on:
+      alpha:
+        condition: service_healthy
+      mqtt:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+    container_name: libre-server
+  libre-core:
+    image: ghcr.io/spruik/libre-core:0.2.0
+    restart: always
+    environment:
+      - LIBRE_CONFIG_FILE=/etc/config/config.json
+    volumes:
+      - ./libre-core/config:/etc/config
+    depends_on:
+      - "influxdb"
+      - "mqtt"
+      - "zero"
+      - "dgraph-init"
+    container_name: libre-core
+  graphql-pubsub:
+    image: ghcr.io/spruik/graphql-pubsub:0.0.3
+    restart: always
+    environment:
+      - LIBRE_CONFIG_FILE=/etc/config/config.json
+    volumes:
+      - ./graphql-pubsub/config:/etc/config
+    depends_on:
+      alpha:
+        condition: service_healthy
+      mqtt:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+    container_name: graphql-pubsub
+  libre-workflow-pubsub:
+    image: ghcr.io/spruik/libre-workflow-pubsub:0.0.1
+    restart: always
+    environment:
+      - LIBRE_CONFIG_FILE=/etc/config/config.json
+    volumes:
+      - ./libre-workflow-pubsub/config:/etc/config
+    depends_on:
+      alpha:
+        condition: service_healthy
+      mqtt:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+    container_name: libre-workflow-pubsub
+  influxdb:
+    image: influxdb:2.0.7
+    volumes:
+      # Mount for influxdb data directory and configuration
+      - ./influxdb/data:/var/lib/influxdb2:rw
+    ports:
+      - "8086:8086"
+    environment:
+      # Use these same configurations parameters in your telegraf configuration, mytelegraf.conf.
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=mypasswordmypasswordmypassword
+      - DOCKER_INFLUXDB_INIT_ORG=Libre
+      - DOCKER_INFLUXDB_INIT_BUCKET=Libre
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=mytokenmytokenmytoken
+    container_name: influxdb
+    healthcheck:
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      test: ["CMD", "curl", "-f", "http://influxdb:8086"]
+  packml-sim:
+    image: spruiktec/packml-simulator
+    restart: always
+    environment:
+      SITE: PACKML
+      AREA: SIM
+      LINE: 'LINE01'
+      MQTT_URL: mqtt://mqtt:1883
+      MQTT_USERNAME: admin
+      MQTT_PASSWORD: public
+      MQTT_CLIENT_ID: packml_sim
+    mem_limit: 30MB
+    depends_on:
+      alpha:
+        condition: service_healthy
+      mqtt:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+  libre-gateway:
+    ports:
+      - 4000:4000
+    image: ghcr.io/spruik/libre-gateway:tom
+    restart: always
+    container_name: libre-gateway
+    environment:
+      - GRAPHQL_ENDPOINT=http://alpha:8080
+      - LIBRE_SERVER_ENDPOINT=http://libre-server
+      - LIBRE_AUTH_CERT_URL=https://demo-libremfg.us.auth0.com/.well-known/jwks.json
+    volumes:
+      - type: bind
+        source: ./libre-gateway/supergraph.graphql
+        target: /app/supergraph.graphql
+    depends_on:
+      alpha:
+        condition: service_healthy
+      mqtt:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+    healthcheck:
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      test: ["CMD", "curl", "-f", "http://libre-gateway:4000"]
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: always
+    environment:
+      - GF_INSTALL_PLUGINS=fifemon-graphql-datasource,marcusolsson-gantt-panel,isaozler-paretochart-panel,michaeldmoore-multistat-panel
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/plugins:/var/lib/grafana/plugins
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/data:/var/lib/grafana
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+    depends_on:
+      - "mqtt"
+      - "alpha"
+      - "influxdb"
+  dgraph-init:
+    image: dgraph/dgraph:v21.03.1
+    volumes:
+      - ./schema:/dgraph/schema
+    command: >
+      sh -c "curl -X POST alpha:8080/admin/schema --data-binary '@./schema/libreSchema.sdl' &&
+             dgraph live -f ./schema/g01.rdf.gz -a alpha:9080 -z zero:5080"
+    container_name: dgraph-init
+    depends_on:
+      alpha:
+          condition: service_healthy
+  libre-edge-agent:
+    image: ghcr.io/spruik/libre-edge-agent:0.2.6
+    restart: always
+    environment:
+      - LIBRE_CONFIG_FILE=/etc/config/config.json
+    volumes:
+      - ./libre-edge-agent/config:/etc/config
+    depends_on:
+      alpha:
+        condition: service_healthy
+      mqtt:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+    container_name: libre-edge-agent
