@@ -53,11 +53,6 @@
   "equipmentCache" : {
     "MonitorChanges" : true
   },
-  "equipmentFinder" : {
-    "ACTIVE_EQ_LEVELS": "Unit",
-    "INCLUDE_EQUIPMENT": "Tenowo/Black/Line20",
-    "EXCLUDE_EQUIPMENT": "MySite/MyArea/ProdLineOEE"
-  },
   "RESTAPI": {
     "PORT" : "28080"
   },
