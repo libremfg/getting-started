@@ -18,6 +18,8 @@ directive @join__graph(name: String!, url: String!) on ENUM_VALUE
 
 directive @cascade(fields: [String]) on FIELD
 
+directive @cacheControl(maxAge: Int!) on QUERY
+
 enum AccessLevel {
   VIEWER
   MODERATOR
@@ -1115,6 +1117,7 @@ type AddMaterialClassPayload {
 input AddMaterialDefinitionInput {
   isActive: Boolean
   code: String!
+  name: String
   materialClass: MaterialClassRef
   description: String
   properties: [PropertyRef]
@@ -2768,6 +2771,11 @@ type DataError {
   message: String
 }
 
+"""
+Data Providers are the client libraries that have been implemented in the edge agent.
+We need to make these plugins that that the library can be extended easily.
+At the moment, MQTT is all we have. We will add OPC-UA next
+"""
 enum DataProvider {
   MQTT
   OPCUA
@@ -3554,6 +3562,10 @@ type EquipmentAggregateResult {
   ocsChosenStopTimeMax: DateTime
 }
 
+"""
+EquipmentClasses are used to manage configuration that is common to a number of similar equipment
+The data properties that an equipment is expected to have are defined on the equipment class
+"""
 type EquipmentClass
   @join__owner(graph: CORE)
   @join__type(graph: CORE, key: "id")
@@ -3989,6 +4001,11 @@ input EquipmentPropertyOverrideRef {
   ignore: Boolean
 }
 
+"""
+EquipmentReasonOverrides are used to make equipment specific changes to equipment class reasons.
+This allows 'Master Lists' of reasons to be defined on the equipment class and for overrides to the master
+reasons to be made at the equipment level
+"""
 type EquipmentReasonOverride
   @join__owner(graph: CORE)
   @join__type(graph: CORE, key: "id")
@@ -4200,6 +4217,7 @@ input EquipmentSpecificationRef {
   uom: UnitOfMeasureRef
 }
 
+"""Multiple equipment events can be defined for an Equipment Template."""
 type EventDefinition
   @join__owner(graph: CORE)
   @join__type(graph: CORE, key: "id")
@@ -4478,12 +4496,18 @@ type EventsByField {
   reasonValue: Float
   reasonValueUoM: String
   packMLStatus: String
+  comment: String
 
   """The id of the work calendar entry associated with this event"""
   shiftId: String
 
   """The description of the work calendar entry associated with this event"""
   shiftDescription: String
+
+  """
+  Returns the duration if packML is execute, otherwise returns 0. Useful for visualisation tools
+  """
+  availability: Int
 }
 
 """the filter for an eventsByField query"""
@@ -4975,6 +4999,12 @@ input InventoryHandlingRuleRef {
   inventoryHandlingPolicy: InventoryHandlingPolicyRef
 }
 
+"""
+A movement of material. The Inventory Transaction represents an immutable ledger of entries.
+Most transactions will record 2 entries with the same transactionId, a debit and a credit like
+a financial ledger.
+All transactions should be added through the custom mutation, so we disable the automatically generated mutations.
+"""
 type InventoryTransaction
   @join__owner(graph: CORE)
   @join__type(graph: CORE, key: "id")
@@ -5532,6 +5562,10 @@ input LastEventFilter {
   includeValue: String
 }
 
+"""
+Store the heartbeat timestamps of connected libre-services.
+microservices can subscribe to this entity to check the status of their subscription
+"""
 type LibreService
   @join__owner(graph: CORE)
   @join__type(graph: CORE, key: "id")
@@ -5682,6 +5716,15 @@ input MaterialAlternateRef {
   priorityOrder: Int
 }
 
+"""
+A unique identification of a specific material class, within the scope
+of the information exchanged (production capability, production
+schedule, production performance, …)
+The ID shall be used in other parts of the model when the material
+class needs to be identified, such as the production capability for
+this material class, or a production response identifying the
+material class used.
+"""
 type MaterialClass
   @join__owner(graph: CORE)
   @join__type(graph: CORE, key: "id")
@@ -5774,6 +5817,7 @@ type MaterialDefinition
   id: ID! @join__field(graph: CORE)
   isActive: Boolean @join__field(graph: CORE)
   code: String! @join__field(graph: CORE)
+  name: String @join__field(graph: CORE)
   materialClass(filter: MaterialClassFilter): MaterialClass @join__field(graph: CORE)
   description: String @join__field(graph: CORE)
   properties(filter: PropertyFilter, order: PropertyOrder, first: Int, offset: Int): [Property] @join__field(graph: CORE)
@@ -5815,6 +5859,8 @@ type MaterialDefinitionAggregateResult {
   count: Int
   codeMin: String
   codeMax: String
+  nameMin: String
+  nameMax: String
   descriptionMin: String
   descriptionMax: String
   scheduleSortOrderMin: Int
@@ -5843,6 +5889,7 @@ input MaterialDefinitionFilter {
   id: [ID!]
   isActive: Boolean
   code: StringHashFilter
+  name: StringHashFilter
   customerMaterialCode: StringHashFilter
   has: [MaterialDefinitionHasFilter]
   and: [MaterialDefinitionFilter]
@@ -5853,6 +5900,7 @@ input MaterialDefinitionFilter {
 enum MaterialDefinitionHasFilter {
   isActive
   code
+  name
   materialClass
   description
   properties
@@ -5886,6 +5934,7 @@ input MaterialDefinitionOrder {
 
 enum MaterialDefinitionOrderable {
   code
+  name
   description
   scheduleSortOrder
   value
@@ -5898,6 +5947,7 @@ enum MaterialDefinitionOrderable {
 
 input MaterialDefinitionPatch {
   isActive: Boolean
+  name: String
   materialClass: MaterialClassRef
   description: String
   properties: [PropertyRef]
@@ -5927,6 +5977,7 @@ input MaterialDefinitionRef {
   id: ID
   isActive: Boolean
   code: String
+  name: String
   materialClass: MaterialClassRef
   description: String
   properties: [PropertyRef]
@@ -7125,6 +7176,10 @@ input OperationsDefinitionRef {
   segments: [OperationsSegmentRef]
 }
 
+"""
+A request for operations to be performed is an operations schedule.
+The schedule may apply to operations, maintenance, quality or inventory operations
+"""
 type OperationsRequest
   @join__owner(graph: CORE)
   @join__type(graph: CORE, key: "id")
@@ -7571,6 +7626,7 @@ input OperationsSegmentRef {
   positionY: Int
 }
 
+"""An outbound Sales Order to be fulfilled"""
 type Order
   @join__owner(graph: CORE)
   @join__type(graph: CORE, key: "id")
@@ -8103,6 +8159,9 @@ enum PersonHasFilter {
   memberOf
 }
 
+"""
+Personnel Class represents a grouping of personnel with similar characteristics
+"""
 type PersonnelClass
   @join__owner(graph: CORE)
   @join__type(graph: CORE, key: "id")
@@ -9498,6 +9557,9 @@ enum SegmentType {
   EMBED_SUBPROCESS
 }
 
+"""
+A shipment represents a consignment of goods being sent or received into a warehouse
+"""
 type Shipment
   @join__owner(graph: CORE)
   @join__type(graph: CORE, key: "id")
@@ -9588,6 +9650,9 @@ enum ShipmentHasFilter {
   delivered
 }
 
+"""
+A shipment item represents an individual package or line item within the shipment
+"""
 type ShipmentItem
   @join__owner(graph: CORE)
   @join__type(graph: CORE, key: "id")
@@ -10045,6 +10110,10 @@ input TestSpecificationRef {
   version: String
 }
 
+"""
+Time Category abbreviations are defined in ISO 22400 and are used
+to calculate the ISO standard KPI
+"""
 enum TimeCategory {
   """
   APT is the actual production time is the time during a work unit is producing. It includes only the value-adding functions.
@@ -10140,6 +10209,10 @@ input TransitionEventRulesetRef {
   eventDefs: [EventDefinitionRef]
 }
 
+"""
+Companies that we have API integration with should be listed here.
+Manual is used to indicate that no API is available.
+"""
 enum TransportCompany {
   AUSPOST
   MANUAL
@@ -11411,6 +11484,14 @@ type WorkCalendarAggregateResult {
   descriptionMax: String
 }
 
+"""
+Work Calendar domain describes the definition of shift patterns and non-working days
+The Work Calendar Definition defines the rule used to determine work calendar entries.
+It contains the recurrence time for the rule, the duration of the entry, the entry type, and properties associated with the entry.
+Standard Entry Types include Working Time and Non-Working Time. The entry may include property definitions.
+The definition uses the rrule.js library to generate calendar events, and the fields available match
+the configuration fields required by rrule.js
+"""
 type WorkCalendarDefinitionEntry
   @join__owner(graph: CORE)
   @join__type(graph: CORE, key: "id")
@@ -13196,6 +13277,11 @@ input WorkMasterRef {
   workDirectives: [WorkDirectiveRef]
 }
 
+"""
+An identification of the resources and workflow required to perform a specified unit of work
+shall be defined as a work definition. The work definition may apply to production, maintenance, quality and inventory
+activities.
+"""
 enum WorkType {
   Production
   Maintenance

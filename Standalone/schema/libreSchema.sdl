@@ -1339,6 +1339,7 @@ type MaterialDefinition @withSubscription @key(fields:"id") {
     id:ID!
     isActive:Boolean @search
     code:String! @id
+    name:String @search(by: [hash])
     materialClass:MaterialClass
     description:String
     properties:[Property]
