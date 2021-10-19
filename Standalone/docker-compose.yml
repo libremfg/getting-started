@@ -200,7 +200,7 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
-      test: ["CMD", "curl", "-f", "http://libre-gateway:4000"]
+      test: ["CMD", "curl", "-f", "http://libre-gateway:4000/health"]
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
