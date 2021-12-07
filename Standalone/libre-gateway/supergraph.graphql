@@ -738,6 +738,19 @@ type AddDeliveryPayload {
   numUids: Int
 }
 
+input AddEquipmentActualInput {
+  isActive: Boolean
+  jobResponse: JobResponseRef!
+  equipment: EquipmentRef
+  quantity: Float
+  quantityUoM: UnitOfMeasureRef
+}
+
+type AddEquipmentActualPayload {
+  equipmentActual(filter: EquipmentActualFilter, order: EquipmentActualOrder, first: Int, offset: Int): [EquipmentActual]
+  numUids: Int
+}
+
 input AddEquipmentClassInput {
   isActive: Boolean
   name: String!
@@ -771,6 +784,7 @@ input AddEquipmentInput {
   children: [EquipmentRef]
   equipmentClass: EquipmentClassRef
   equipmentLevel: EquipmentElementLevel
+  equipmentActual: [EquipmentActualRef]
   materialEquipment: [MaterialEquipmentRef]
   properties: [PropertyRef]
   propertyNameAliases: [PropertyNameAliasRef]
@@ -971,10 +985,25 @@ input AddInventoryHandlingRuleInput {
   warehouse: [EquipmentRef!]!
   stateModel: MaterialStateModelRef!
   inventoryHandlingPolicy: InventoryHandlingPolicyRef!
+  inventoryHoldingPolicy: [InventoryHoldingPolicyRef]
 }
 
 type AddInventoryHandlingRulePayload {
   inventoryHandlingRule(filter: InventoryHandlingRuleFilter, first: Int, offset: Int): [InventoryHandlingRule]
+  numUids: Int
+}
+
+input AddInventoryHoldingPolicyInput {
+  isActive: Boolean
+  material: MaterialDefinitionRef!
+  inventoryHandlingRule: InventoryHandlingRuleRef!
+  materialStatus: MaterialStatusRef!
+  inventoryMax: Int
+  inventoryMin: Int
+}
+
+type AddInventoryHoldingPolicyPayload {
+  inventoryHoldingPolicy(filter: InventoryHoldingPolicyFilter, order: InventoryHoldingPolicyOrder, first: Int, offset: Int): [InventoryHoldingPolicy]
   numUids: Int
 }
 
@@ -1068,6 +1097,9 @@ input AddJobResponseInput {
   jobOrder: JobOrderRef
   events: [EventLogRef]
   quantities: [QuantityLogRef]
+  personnelActual: [PersonnelActualRef]
+  equipmentActual: [EquipmentActualRef]
+  materialActual: [MaterialActualRef]
 }
 
 type AddJobResponsePayload {
@@ -1082,6 +1114,22 @@ input AddLibreServiceInput {
 
 type AddLibreServicePayload {
   libreService(filter: LibreServiceFilter, order: LibreServiceOrder, first: Int, offset: Int): [LibreService]
+  numUids: Int
+}
+
+input AddMaterialActualInput {
+  isActive: Boolean
+  jobResponse: JobResponseRef!
+  materialDefinition: MaterialDefinitionRef
+  materialLot: MaterialLotRef
+  materialSubLot: MaterialSubLotRef
+  materialUse: MaterialUse
+  quantity: Float
+  quantityUoM: UnitOfMeasureRef
+}
+
+type AddMaterialActualPayload {
+  materialActual(filter: MaterialActualFilter, order: MaterialActualOrder, first: Int, offset: Int): [MaterialActual]
   numUids: Int
 }
 
@@ -1119,6 +1167,7 @@ input AddMaterialDefinitionInput {
   code: String!
   name: String
   materialClass: MaterialClassRef
+  materialActual: [MaterialActualRef]
   description: String
   properties: [PropertyRef]
   scheduleSortOrder: Int
@@ -1126,6 +1175,7 @@ input AddMaterialDefinitionInput {
   uomConversions: [UnitOfMeasureConversionRef]
   workSpecifications: [MaterialSpecificationRef]
   operationsDefinitions: [OperationsDefinitionRef]
+  lots: [MaterialLotRef]
   sublots: [MaterialSubLotRef]
   units: [MaterialUnitRef]
   events: [InventoryTransactionRef]
@@ -1135,6 +1185,7 @@ input AddMaterialDefinitionInput {
   supplier: String
   serialMask: String
   inventoryHandlingPolicy: InventoryHandlingPolicyRef
+  inventoryHoldingPolicy: [InventoryHoldingPolicyRef]
   alternates: [MaterialAlternateRef]
   materialEquipment: [MaterialEquipmentRef]
   shipmentItems: [ShipmentItemRef]
@@ -1181,6 +1232,13 @@ input AddMaterialLotInput {
   isActive: Boolean
   code: String!
   description: String
+  properties: [PropertyRef]
+  material: MaterialDefinitionRef!
+  materialActual: [MaterialActualRef]
+  isAssembledFromLot: [MaterialLotRef]
+  isComponentOfLot: [MaterialLotRef]
+  isAssembledFromSubLot: [MaterialSubLotRef]
+  isComponentOfSubLot: [MaterialSubLotRef]
 }
 
 type AddMaterialLotPayload {
@@ -1199,6 +1257,7 @@ input AddMaterialSpecificationInput {
   materialClass: MaterialClassRef
   description: String
   materialUse: MaterialUse!
+  allowedStates: [MaterialStatusRef]
   isTracked: Boolean
   quantity: Float
   uom: UnitOfMeasureRef
@@ -1226,6 +1285,7 @@ input AddMaterialStateTransitionInput {
   to: [MaterialStatusRef]
   canReceive: Boolean
   canPack: Boolean
+  isPlanned: Boolean
 }
 
 type AddMaterialStateTransitionPayload {
@@ -1236,6 +1296,7 @@ type AddMaterialStateTransitionPayload {
 input AddMaterialStatusInput {
   isActive: Boolean
   code: String!
+  inventoryHoldingPolicy: [InventoryHoldingPolicyRef]
 }
 
 type AddMaterialStatusPayload {
@@ -1247,10 +1308,15 @@ input AddMaterialSubLotInput {
   isActive: Boolean
   code: String!
   material: MaterialDefinitionRef!
+  materialActual: [MaterialActualRef]
   description: String
   status: MaterialStatusRef!
   carrier: CarrierRef
   storageLocation: EquipmentRef
+  isAssembledFromSubLot: [MaterialSubLotRef]
+  isComponentOfSubLot: [MaterialSubLotRef]
+  isComponentOfLot: [MaterialLotRef]
+  isAssembledFromLot: [MaterialLotRef]
   quantity: String
   dataType: DataType
   unitOfMeasure: UnitOfMeasureRef
@@ -1479,6 +1545,20 @@ input AddPersonInput {
   description: String
   properties: [PropertyRef]
   memberOf: [PersonnelClassRef]
+  personnelActual: [PersonnelActualRef]
+}
+
+input AddPersonnelActualInput {
+  isActive: Boolean
+  jobResponse: JobResponseRef!
+  person: PersonRef
+  quantity: Float
+  quantityUoM: UnitOfMeasureRef
+}
+
+type AddPersonnelActualPayload {
+  personnelActual(filter: PersonnelActualFilter, order: PersonnelActualOrder, first: Int, offset: Int): [PersonnelActual]
+  numUids: Int
 }
 
 input AddPersonnelClassInput {
@@ -2867,6 +2947,12 @@ type DeleteDeliveryPayload {
   numUids: Int
 }
 
+type DeleteEquipmentActualPayload {
+  equipmentActual(filter: EquipmentActualFilter, order: EquipmentActualOrder, first: Int, offset: Int): [EquipmentActual]
+  msg: String
+  numUids: Int
+}
+
 type DeleteEquipmentClassPayload {
   equipmentClass(filter: EquipmentClassFilter, order: EquipmentClassOrder, first: Int, offset: Int): [EquipmentClass]
   msg: String
@@ -2939,6 +3025,12 @@ type DeleteInventoryHandlingRulePayload {
   numUids: Int
 }
 
+type DeleteInventoryHoldingPolicyPayload {
+  inventoryHoldingPolicy(filter: InventoryHoldingPolicyFilter, order: InventoryHoldingPolicyOrder, first: Int, offset: Int): [InventoryHoldingPolicy]
+  msg: String
+  numUids: Int
+}
+
 type DeleteInventoryTransactionPayload {
   inventoryTransaction(filter: InventoryTransactionFilter, order: InventoryTransactionOrder, first: Int, offset: Int): [InventoryTransaction]
   msg: String
@@ -2965,6 +3057,12 @@ type DeleteJobResponsePayload {
 
 type DeleteLibreServicePayload {
   libreService(filter: LibreServiceFilter, order: LibreServiceOrder, first: Int, offset: Int): [LibreService]
+  msg: String
+  numUids: Int
+}
+
+type DeleteMaterialActualPayload {
+  materialActual(filter: MaterialActualFilter, order: MaterialActualOrder, first: Int, offset: Int): [MaterialActual]
   msg: String
   numUids: Int
 }
@@ -3091,6 +3189,12 @@ type DeletePartnerPayload {
 
 type DeletePayloadFieldDefinitionPayload {
   payloadFieldDefinition(filter: PayloadFieldDefinitionFilter, order: PayloadFieldDefinitionOrder, first: Int, offset: Int): [PayloadFieldDefinition]
+  msg: String
+  numUids: Int
+}
+
+type DeletePersonnelActualPayload {
+  personnelActual(filter: PersonnelActualFilter, order: PersonnelActualOrder, first: Int, offset: Int): [PersonnelActual]
   msg: String
   numUids: Int
 }
@@ -3453,6 +3557,7 @@ type Equipment
   children(filter: EquipmentFilter, order: EquipmentOrder, first: Int, offset: Int): [Equipment] @join__field(graph: CORE)
   equipmentClass(filter: EquipmentClassFilter): EquipmentClass @join__field(graph: CORE)
   equipmentLevel: EquipmentElementLevel @join__field(graph: CORE)
+  equipmentActual(filter: EquipmentActualFilter, order: EquipmentActualOrder, first: Int, offset: Int): [EquipmentActual] @join__field(graph: CORE)
   materialEquipment(filter: MaterialEquipmentFilter, order: MaterialEquipmentOrder, first: Int, offset: Int): [MaterialEquipment] @join__field(graph: CORE)
   properties(filter: PropertyFilter, order: PropertyOrder, first: Int, offset: Int): [Property] @join__field(graph: CORE)
   propertyNameAliases(filter: PropertyNameAliasFilter, order: PropertyNameAliasOrder, first: Int, offset: Int): [PropertyNameAlias] @join__field(graph: CORE)
@@ -3500,6 +3605,7 @@ type Equipment
   ocsWorkflowSelector: String @join__field(graph: CORE)
   ocsChosenStopTime: DateTime @join__field(graph: CORE)
   childrenAggregate(filter: EquipmentFilter): EquipmentAggregateResult @join__field(graph: CORE)
+  equipmentActualAggregate(filter: EquipmentActualFilter): EquipmentActualAggregateResult @join__field(graph: CORE)
   materialEquipmentAggregate(filter: MaterialEquipmentFilter): MaterialEquipmentAggregateResult @join__field(graph: CORE)
   propertiesAggregate(filter: PropertyFilter): PropertyAggregateResult @join__field(graph: CORE)
   propertyNameAliasesAggregate(filter: PropertyNameAliasFilter): PropertyNameAliasAggregateResult @join__field(graph: CORE)
@@ -3530,6 +3636,70 @@ type Equipment
   jobResponsesByTimeRange(filter: TimeRangeFilter): [JobResponse] @join__field(graph: PROFILES, provides: "startDateTime endDateTime actualDuration")
   maintenanceCallsByTimeRange(filter: TimeRangeFilter!): [MaintenanceLog] @join__field(graph: PROFILES)
   currentStatus: EventsByField @join__field(graph: PROFILES)
+}
+
+type EquipmentActual
+  @join__owner(graph: CORE)
+  @join__type(graph: CORE, key: "id")
+{
+  id: ID! @join__field(graph: CORE)
+  isActive: Boolean @join__field(graph: CORE)
+  jobResponse(filter: JobResponseFilter): JobResponse! @join__field(graph: CORE)
+  equipment(filter: EquipmentFilter): Equipment @join__field(graph: CORE)
+  quantity: Float @join__field(graph: CORE)
+  quantityUoM(filter: UnitOfMeasureFilter): UnitOfMeasure @join__field(graph: CORE)
+}
+
+type EquipmentActualAggregateResult {
+  count: Int
+  quantityMin: Float
+  quantityMax: Float
+  quantitySum: Float
+  quantityAvg: Float
+}
+
+input EquipmentActualFilter {
+  id: [ID!]
+  isActive: Boolean
+  has: [EquipmentActualHasFilter]
+  and: [EquipmentActualFilter]
+  or: [EquipmentActualFilter]
+  not: EquipmentActualFilter
+}
+
+enum EquipmentActualHasFilter {
+  isActive
+  jobResponse
+  equipment
+  quantity
+  quantityUoM
+}
+
+input EquipmentActualOrder {
+  asc: EquipmentActualOrderable
+  desc: EquipmentActualOrderable
+  then: EquipmentActualOrder
+}
+
+enum EquipmentActualOrderable {
+  quantity
+}
+
+input EquipmentActualPatch {
+  isActive: Boolean
+  jobResponse: JobResponseRef
+  equipment: EquipmentRef
+  quantity: Float
+  quantityUoM: UnitOfMeasureRef
+}
+
+input EquipmentActualRef {
+  id: ID
+  isActive: Boolean
+  jobResponse: JobResponseRef
+  equipment: EquipmentRef
+  quantity: Float
+  quantityUoM: UnitOfMeasureRef
 }
 
 type EquipmentAggregateResult {
@@ -3737,6 +3907,7 @@ enum EquipmentHasFilter {
   children
   equipmentClass
   equipmentLevel
+  equipmentActual
   materialEquipment
   properties
   propertyNameAliases
@@ -3873,6 +4044,7 @@ input EquipmentPatch {
   children: [EquipmentRef]
   equipmentClass: EquipmentClassRef
   equipmentLevel: EquipmentElementLevel
+  equipmentActual: [EquipmentActualRef]
   materialEquipment: [MaterialEquipmentRef]
   properties: [PropertyRef]
   propertyNameAliases: [PropertyNameAliasRef]
@@ -4082,6 +4254,7 @@ input EquipmentRef {
   children: [EquipmentRef]
   equipmentClass: EquipmentClassRef
   equipmentLevel: EquipmentElementLevel
+  equipmentActual: [EquipmentActualRef]
   materialEquipment: [MaterialEquipmentRef]
   properties: [PropertyRef]
   propertyNameAliases: [PropertyNameAliasRef]
@@ -4496,7 +4669,6 @@ type EventsByField {
   reasonValue: Float
   reasonValueUoM: String
   packMLStatus: String
-  comment: String
 
   """The id of the work calendar entry associated with this event"""
   shiftId: String
@@ -4954,7 +5126,9 @@ type InventoryHandlingRule
   warehouse(filter: EquipmentFilter, order: EquipmentOrder, first: Int, offset: Int): [Equipment!]! @join__field(graph: CORE)
   stateModel(filter: MaterialStateModelFilter): MaterialStateModel! @join__field(graph: CORE)
   inventoryHandlingPolicy(filter: InventoryHandlingPolicyFilter): InventoryHandlingPolicy! @join__field(graph: CORE)
+  inventoryHoldingPolicy(filter: InventoryHoldingPolicyFilter, order: InventoryHoldingPolicyOrder, first: Int, offset: Int): [InventoryHoldingPolicy] @join__field(graph: CORE)
   warehouseAggregate(filter: EquipmentFilter): EquipmentAggregateResult @join__field(graph: CORE)
+  inventoryHoldingPolicyAggregate(filter: InventoryHoldingPolicyFilter): InventoryHoldingPolicyAggregateResult @join__field(graph: CORE)
 }
 
 type InventoryHandlingRuleAggregateResult {
@@ -4978,6 +5152,7 @@ enum InventoryHandlingRuleHasFilter {
   warehouse
   stateModel
   inventoryHandlingPolicy
+  inventoryHoldingPolicy
 }
 
 input InventoryHandlingRulePatch {
@@ -4987,6 +5162,7 @@ input InventoryHandlingRulePatch {
   warehouse: [EquipmentRef!]
   stateModel: MaterialStateModelRef
   inventoryHandlingPolicy: InventoryHandlingPolicyRef
+  inventoryHoldingPolicy: [InventoryHoldingPolicyRef]
 }
 
 input InventoryHandlingRuleRef {
@@ -4997,6 +5173,83 @@ input InventoryHandlingRuleRef {
   warehouse: [EquipmentRef!]
   stateModel: MaterialStateModelRef
   inventoryHandlingPolicy: InventoryHandlingPolicyRef
+  inventoryHoldingPolicy: [InventoryHoldingPolicyRef]
+}
+
+"""
+The settings used to plan for when more material should be processed or purchased
+"""
+type InventoryHoldingPolicy
+  @join__owner(graph: CORE)
+  @join__type(graph: CORE, key: "id")
+{
+  id: ID! @join__field(graph: CORE)
+  isActive: Boolean @join__field(graph: CORE)
+  material(filter: MaterialDefinitionFilter): MaterialDefinition! @join__field(graph: CORE)
+  inventoryHandlingRule(filter: InventoryHandlingRuleFilter): InventoryHandlingRule! @join__field(graph: CORE)
+  materialStatus(filter: MaterialStatusFilter): MaterialStatus! @join__field(graph: CORE)
+  inventoryMax: Int @join__field(graph: CORE)
+  inventoryMin: Int @join__field(graph: CORE)
+}
+
+type InventoryHoldingPolicyAggregateResult {
+  count: Int
+  inventoryMaxMin: Int
+  inventoryMaxMax: Int
+  inventoryMaxSum: Int
+  inventoryMaxAvg: Float
+  inventoryMinMin: Int
+  inventoryMinMax: Int
+  inventoryMinSum: Int
+  inventoryMinAvg: Float
+}
+
+input InventoryHoldingPolicyFilter {
+  id: [ID!]
+  isActive: Boolean
+  has: [InventoryHoldingPolicyHasFilter]
+  and: [InventoryHoldingPolicyFilter]
+  or: [InventoryHoldingPolicyFilter]
+  not: InventoryHoldingPolicyFilter
+}
+
+enum InventoryHoldingPolicyHasFilter {
+  isActive
+  material
+  inventoryHandlingRule
+  materialStatus
+  inventoryMax
+  inventoryMin
+}
+
+input InventoryHoldingPolicyOrder {
+  asc: InventoryHoldingPolicyOrderable
+  desc: InventoryHoldingPolicyOrderable
+  then: InventoryHoldingPolicyOrder
+}
+
+enum InventoryHoldingPolicyOrderable {
+  inventoryMax
+  inventoryMin
+}
+
+input InventoryHoldingPolicyPatch {
+  isActive: Boolean
+  material: MaterialDefinitionRef
+  inventoryHandlingRule: InventoryHandlingRuleRef
+  materialStatus: MaterialStatusRef
+  inventoryMax: Int
+  inventoryMin: Int
+}
+
+input InventoryHoldingPolicyRef {
+  id: ID
+  isActive: Boolean
+  material: MaterialDefinitionRef
+  inventoryHandlingRule: InventoryHandlingRuleRef
+  materialStatus: MaterialStatusRef
+  inventoryMax: Int
+  inventoryMin: Int
 }
 
 """
@@ -5443,8 +5696,14 @@ type JobResponse
   jobOrder(filter: JobOrderFilter): JobOrder @join__field(graph: CORE)
   events(filter: EventLogFilter, order: EventLogOrder, first: Int, offset: Int): [EventLog] @join__field(graph: CORE)
   quantities(filter: QuantityLogFilter, order: QuantityLogOrder, first: Int, offset: Int): [QuantityLog] @join__field(graph: CORE)
+  personnelActual(filter: PersonnelActualFilter, order: PersonnelActualOrder, first: Int, offset: Int): [PersonnelActual] @join__field(graph: CORE)
+  equipmentActual(filter: EquipmentActualFilter, order: EquipmentActualOrder, first: Int, offset: Int): [EquipmentActual] @join__field(graph: CORE)
+  materialActual(filter: MaterialActualFilter, order: MaterialActualOrder, first: Int, offset: Int): [MaterialActual] @join__field(graph: CORE)
   eventsAggregate(filter: EventLogFilter): EventLogAggregateResult @join__field(graph: CORE)
   quantitiesAggregate(filter: QuantityLogFilter): QuantityLogAggregateResult @join__field(graph: CORE)
+  personnelActualAggregate(filter: PersonnelActualFilter): PersonnelActualAggregateResult @join__field(graph: CORE)
+  equipmentActualAggregate(filter: EquipmentActualFilter): EquipmentActualAggregateResult @join__field(graph: CORE)
+  materialActualAggregate(filter: MaterialActualFilter): MaterialActualAggregateResult @join__field(graph: CORE)
   duration: Float @join__field(graph: PROFILES, requires: "startDateTime endDateTime")
 
   """deprecated"""
@@ -5500,6 +5759,9 @@ enum JobResponseHasFilter {
   jobOrder
   events
   quantities
+  personnelActual
+  equipmentActual
+  materialActual
 }
 
 input JobResponseOrder {
@@ -5531,6 +5793,9 @@ input JobResponsePatch {
   jobOrder: JobOrderRef
   events: [EventLogRef]
   quantities: [QuantityLogRef]
+  personnelActual: [PersonnelActualRef]
+  equipmentActual: [EquipmentActualRef]
+  materialActual: [MaterialActualRef]
 }
 
 input JobResponseRef {
@@ -5548,6 +5813,9 @@ input JobResponseRef {
   jobOrder: JobOrderRef
   events: [EventLogRef]
   quantities: [QuantityLogRef]
+  personnelActual: [PersonnelActualRef]
+  equipmentActual: [EquipmentActualRef]
+  materialActual: [MaterialActualRef]
 }
 
 scalar join__FieldSet
@@ -5647,6 +5915,82 @@ type MaintenanceLog {
   state: String
   type: String
   workflowInstanceID: String
+}
+
+type MaterialActual
+  @join__owner(graph: CORE)
+  @join__type(graph: CORE, key: "id")
+{
+  id: ID! @join__field(graph: CORE)
+  isActive: Boolean @join__field(graph: CORE)
+  jobResponse(filter: JobResponseFilter): JobResponse! @join__field(graph: CORE)
+  materialDefinition(filter: MaterialDefinitionFilter): MaterialDefinition @join__field(graph: CORE)
+  materialLot(filter: MaterialLotFilter): MaterialLot @join__field(graph: CORE)
+  materialSubLot(filter: MaterialSubLotFilter): MaterialSubLot @join__field(graph: CORE)
+  materialUse: MaterialUse @join__field(graph: CORE)
+  quantity: Float @join__field(graph: CORE)
+  quantityUoM(filter: UnitOfMeasureFilter): UnitOfMeasure @join__field(graph: CORE)
+}
+
+type MaterialActualAggregateResult {
+  count: Int
+  quantityMin: Float
+  quantityMax: Float
+  quantitySum: Float
+  quantityAvg: Float
+}
+
+input MaterialActualFilter {
+  id: [ID!]
+  isActive: Boolean
+  has: [MaterialActualHasFilter]
+  and: [MaterialActualFilter]
+  or: [MaterialActualFilter]
+  not: MaterialActualFilter
+}
+
+enum MaterialActualHasFilter {
+  isActive
+  jobResponse
+  materialDefinition
+  materialLot
+  materialSubLot
+  materialUse
+  quantity
+  quantityUoM
+}
+
+input MaterialActualOrder {
+  asc: MaterialActualOrderable
+  desc: MaterialActualOrderable
+  then: MaterialActualOrder
+}
+
+enum MaterialActualOrderable {
+  quantity
+}
+
+input MaterialActualPatch {
+  isActive: Boolean
+  jobResponse: JobResponseRef
+  materialDefinition: MaterialDefinitionRef
+  materialLot: MaterialLotRef
+  materialSubLot: MaterialSubLotRef
+  materialUse: MaterialUse
+  quantity: Float
+  quantityUoM: UnitOfMeasureRef
+}
+
+input MaterialActualRef {
+  id: ID
+  isActive: Boolean
+  jobResponse: JobResponseRef
+  materialDefinition: MaterialDefinitionRef
+  materialLot: MaterialLotRef
+  materialSubLot: MaterialSubLotRef
+  materialUse: MaterialUse
+  quantity: Float
+  quantityUoM: UnitOfMeasureRef
 }
 
 type MaterialAlternate
@@ -5819,6 +6163,7 @@ type MaterialDefinition
   code: String! @join__field(graph: CORE)
   name: String @join__field(graph: CORE)
   materialClass(filter: MaterialClassFilter): MaterialClass @join__field(graph: CORE)
+  materialActual(filter: MaterialActualFilter, order: MaterialActualOrder, first: Int, offset: Int): [MaterialActual] @join__field(graph: CORE)
   description: String @join__field(graph: CORE)
   properties(filter: PropertyFilter, order: PropertyOrder, first: Int, offset: Int): [Property] @join__field(graph: CORE)
   scheduleSortOrder: Int @join__field(graph: CORE)
@@ -5826,6 +6171,7 @@ type MaterialDefinition
   uomConversions(filter: UnitOfMeasureConversionFilter, order: UnitOfMeasureConversionOrder, first: Int, offset: Int): [UnitOfMeasureConversion] @join__field(graph: CORE)
   workSpecifications(filter: MaterialSpecificationFilter, order: MaterialSpecificationOrder, first: Int, offset: Int): [MaterialSpecification] @join__field(graph: CORE)
   operationsDefinitions(filter: OperationsDefinitionFilter, order: OperationsDefinitionOrder, first: Int, offset: Int): [OperationsDefinition] @join__field(graph: CORE)
+  lots(filter: MaterialLotFilter, order: MaterialLotOrder, first: Int, offset: Int): [MaterialLot] @join__field(graph: CORE)
   sublots(filter: MaterialSubLotFilter, order: MaterialSubLotOrder, first: Int, offset: Int): [MaterialSubLot] @join__field(graph: CORE)
   units(filter: MaterialUnitFilter, order: MaterialUnitOrder, first: Int, offset: Int): [MaterialUnit] @join__field(graph: CORE)
   events(filter: InventoryTransactionFilter, order: InventoryTransactionOrder, first: Int, offset: Int): [InventoryTransaction] @join__field(graph: CORE)
@@ -5835,19 +6181,23 @@ type MaterialDefinition
   supplier: String @join__field(graph: CORE)
   serialMask: String @join__field(graph: CORE)
   inventoryHandlingPolicy(filter: InventoryHandlingPolicyFilter): InventoryHandlingPolicy @join__field(graph: CORE)
+  inventoryHoldingPolicy(filter: InventoryHoldingPolicyFilter, order: InventoryHoldingPolicyOrder, first: Int, offset: Int): [InventoryHoldingPolicy] @join__field(graph: CORE)
   alternates(filter: MaterialAlternateFilter, order: MaterialAlternateOrder, first: Int, offset: Int): [MaterialAlternate] @join__field(graph: CORE)
   materialEquipment(filter: MaterialEquipmentFilter, order: MaterialEquipmentOrder, first: Int, offset: Int): [MaterialEquipment] @join__field(graph: CORE)
   shipmentItems(filter: ShipmentItemFilter, order: ShipmentItemOrder, first: Int, offset: Int): [ShipmentItem] @join__field(graph: CORE)
   OrderLines(filter: OrderLineFilter, order: OrderLineOrder, first: Int, offset: Int): [OrderLine] @join__field(graph: CORE)
   transferrableMaterials(filter: MaterialDefinitionFilter, order: MaterialDefinitionOrder, first: Int, offset: Int): [MaterialDefinition] @join__field(graph: CORE)
   customerMaterialCode: String @join__field(graph: CORE)
+  materialActualAggregate(filter: MaterialActualFilter): MaterialActualAggregateResult @join__field(graph: CORE)
   propertiesAggregate(filter: PropertyFilter): PropertyAggregateResult @join__field(graph: CORE)
   uomConversionsAggregate(filter: UnitOfMeasureConversionFilter): UnitOfMeasureConversionAggregateResult @join__field(graph: CORE)
   workSpecificationsAggregate(filter: MaterialSpecificationFilter): MaterialSpecificationAggregateResult @join__field(graph: CORE)
   operationsDefinitionsAggregate(filter: OperationsDefinitionFilter): OperationsDefinitionAggregateResult @join__field(graph: CORE)
+  lotsAggregate(filter: MaterialLotFilter): MaterialLotAggregateResult @join__field(graph: CORE)
   sublotsAggregate(filter: MaterialSubLotFilter): MaterialSubLotAggregateResult @join__field(graph: CORE)
   unitsAggregate(filter: MaterialUnitFilter): MaterialUnitAggregateResult @join__field(graph: CORE)
   eventsAggregate(filter: InventoryTransactionFilter): InventoryTransactionAggregateResult @join__field(graph: CORE)
+  inventoryHoldingPolicyAggregate(filter: InventoryHoldingPolicyFilter): InventoryHoldingPolicyAggregateResult @join__field(graph: CORE)
   alternatesAggregate(filter: MaterialAlternateFilter): MaterialAlternateAggregateResult @join__field(graph: CORE)
   materialEquipmentAggregate(filter: MaterialEquipmentFilter): MaterialEquipmentAggregateResult @join__field(graph: CORE)
   shipmentItemsAggregate(filter: ShipmentItemFilter): ShipmentItemAggregateResult @join__field(graph: CORE)
@@ -5902,6 +6252,7 @@ enum MaterialDefinitionHasFilter {
   code
   name
   materialClass
+  materialActual
   description
   properties
   scheduleSortOrder
@@ -5909,6 +6260,7 @@ enum MaterialDefinitionHasFilter {
   uomConversions
   workSpecifications
   operationsDefinitions
+  lots
   sublots
   units
   events
@@ -5918,6 +6270,7 @@ enum MaterialDefinitionHasFilter {
   supplier
   serialMask
   inventoryHandlingPolicy
+  inventoryHoldingPolicy
   alternates
   materialEquipment
   shipmentItems
@@ -5949,6 +6302,7 @@ input MaterialDefinitionPatch {
   isActive: Boolean
   name: String
   materialClass: MaterialClassRef
+  materialActual: [MaterialActualRef]
   description: String
   properties: [PropertyRef]
   scheduleSortOrder: Int
@@ -5956,6 +6310,7 @@ input MaterialDefinitionPatch {
   uomConversions: [UnitOfMeasureConversionRef]
   workSpecifications: [MaterialSpecificationRef]
   operationsDefinitions: [OperationsDefinitionRef]
+  lots: [MaterialLotRef]
   sublots: [MaterialSubLotRef]
   units: [MaterialUnitRef]
   events: [InventoryTransactionRef]
@@ -5965,6 +6320,7 @@ input MaterialDefinitionPatch {
   supplier: String
   serialMask: String
   inventoryHandlingPolicy: InventoryHandlingPolicyRef
+  inventoryHoldingPolicy: [InventoryHoldingPolicyRef]
   alternates: [MaterialAlternateRef]
   materialEquipment: [MaterialEquipmentRef]
   shipmentItems: [ShipmentItemRef]
@@ -5979,6 +6335,7 @@ input MaterialDefinitionRef {
   code: String
   name: String
   materialClass: MaterialClassRef
+  materialActual: [MaterialActualRef]
   description: String
   properties: [PropertyRef]
   scheduleSortOrder: Int
@@ -5986,6 +6343,7 @@ input MaterialDefinitionRef {
   uomConversions: [UnitOfMeasureConversionRef]
   workSpecifications: [MaterialSpecificationRef]
   operationsDefinitions: [OperationsDefinitionRef]
+  lots: [MaterialLotRef]
   sublots: [MaterialSubLotRef]
   units: [MaterialUnitRef]
   events: [InventoryTransactionRef]
@@ -5995,6 +6353,7 @@ input MaterialDefinitionRef {
   supplier: String
   serialMask: String
   inventoryHandlingPolicy: InventoryHandlingPolicyRef
+  inventoryHoldingPolicy: [InventoryHoldingPolicyRef]
   alternates: [MaterialAlternateRef]
   materialEquipment: [MaterialEquipmentRef]
   shipmentItems: [ShipmentItemRef]
@@ -6159,6 +6518,12 @@ input MaterialEventRulesetRef {
   eventDefs: [EventDefinitionRef]
 }
 
+"""
+A uniquely identified specific amount of material, either countable or weighable shall be presented as a material lot.
+A material lot describes the planned or actual total quantity or amount of material available, its current state
+and its specific property values.
+ref-IEC62264-2 5.4.6
+"""
 type MaterialLot
   @join__owner(graph: CORE)
   @join__type(graph: CORE, key: "id")
@@ -6167,6 +6532,19 @@ type MaterialLot
   isActive: Boolean @join__field(graph: CORE)
   code: String! @join__field(graph: CORE)
   description: String @join__field(graph: CORE)
+  properties(filter: PropertyFilter, order: PropertyOrder, first: Int, offset: Int): [Property] @join__field(graph: CORE)
+  material(filter: MaterialDefinitionFilter): MaterialDefinition! @join__field(graph: CORE)
+  materialActual(filter: MaterialActualFilter, order: MaterialActualOrder, first: Int, offset: Int): [MaterialActual] @join__field(graph: CORE)
+  isAssembledFromLot(filter: MaterialLotFilter, order: MaterialLotOrder, first: Int, offset: Int): [MaterialLot] @join__field(graph: CORE)
+  isComponentOfLot(filter: MaterialLotFilter, order: MaterialLotOrder, first: Int, offset: Int): [MaterialLot] @join__field(graph: CORE)
+  isAssembledFromSubLot(filter: MaterialSubLotFilter, order: MaterialSubLotOrder, first: Int, offset: Int): [MaterialSubLot] @join__field(graph: CORE)
+  isComponentOfSubLot(filter: MaterialSubLotFilter, order: MaterialSubLotOrder, first: Int, offset: Int): [MaterialSubLot] @join__field(graph: CORE)
+  propertiesAggregate(filter: PropertyFilter): PropertyAggregateResult @join__field(graph: CORE)
+  materialActualAggregate(filter: MaterialActualFilter): MaterialActualAggregateResult @join__field(graph: CORE)
+  isAssembledFromLotAggregate(filter: MaterialLotFilter): MaterialLotAggregateResult @join__field(graph: CORE)
+  isComponentOfLotAggregate(filter: MaterialLotFilter): MaterialLotAggregateResult @join__field(graph: CORE)
+  isAssembledFromSubLotAggregate(filter: MaterialSubLotFilter): MaterialSubLotAggregateResult @join__field(graph: CORE)
+  isComponentOfSubLotAggregate(filter: MaterialSubLotFilter): MaterialSubLotAggregateResult @join__field(graph: CORE)
 }
 
 type MaterialLotAggregateResult {
@@ -6191,6 +6569,13 @@ enum MaterialLotHasFilter {
   isActive
   code
   description
+  properties
+  material
+  materialActual
+  isAssembledFromLot
+  isComponentOfLot
+  isAssembledFromSubLot
+  isComponentOfSubLot
 }
 
 input MaterialLotOrder {
@@ -6207,6 +6592,13 @@ enum MaterialLotOrderable {
 input MaterialLotPatch {
   isActive: Boolean
   description: String
+  properties: [PropertyRef]
+  material: MaterialDefinitionRef
+  materialActual: [MaterialActualRef]
+  isAssembledFromLot: [MaterialLotRef]
+  isComponentOfLot: [MaterialLotRef]
+  isAssembledFromSubLot: [MaterialSubLotRef]
+  isComponentOfSubLot: [MaterialSubLotRef]
 }
 
 input MaterialLotRef {
@@ -6214,6 +6606,13 @@ input MaterialLotRef {
   isActive: Boolean
   code: String
   description: String
+  properties: [PropertyRef]
+  material: MaterialDefinitionRef
+  materialActual: [MaterialActualRef]
+  isAssembledFromLot: [MaterialLotRef]
+  isComponentOfLot: [MaterialLotRef]
+  isAssembledFromSubLot: [MaterialSubLotRef]
+  isComponentOfSubLot: [MaterialSubLotRef]
 }
 
 input materialQuantityMovement {
@@ -6236,9 +6635,11 @@ type MaterialSpecification
   materialClass(filter: MaterialClassFilter): MaterialClass @join__field(graph: CORE)
   description: String @join__field(graph: CORE)
   materialUse: MaterialUse! @join__field(graph: CORE)
+  allowedStates(filter: MaterialStatusFilter, order: MaterialStatusOrder, first: Int, offset: Int): [MaterialStatus] @join__field(graph: CORE)
   isTracked: Boolean @join__field(graph: CORE)
   quantity: Float @join__field(graph: CORE)
   uom(filter: UnitOfMeasureFilter): UnitOfMeasure @join__field(graph: CORE)
+  allowedStatesAggregate(filter: MaterialStatusFilter): MaterialStatusAggregateResult @join__field(graph: CORE)
 }
 
 type MaterialSpecificationAggregateResult {
@@ -6271,6 +6672,7 @@ enum MaterialSpecificationHasFilter {
   materialClass
   description
   materialUse
+  allowedStates
   isTracked
   quantity
   uom
@@ -6298,6 +6700,7 @@ input MaterialSpecificationPatch {
   materialClass: MaterialClassRef
   description: String
   materialUse: MaterialUse
+  allowedStates: [MaterialStatusRef]
   isTracked: Boolean
   quantity: Float
   uom: UnitOfMeasureRef
@@ -6315,6 +6718,7 @@ input MaterialSpecificationRef {
   materialClass: MaterialClassRef
   description: String
   materialUse: MaterialUse
+  allowedStates: [MaterialStatusRef]
   isTracked: Boolean
   quantity: Float
   uom: UnitOfMeasureRef
@@ -6389,6 +6793,7 @@ type MaterialStateTransition
   to(filter: MaterialStatusFilter, order: MaterialStatusOrder, first: Int, offset: Int): [MaterialStatus] @join__field(graph: CORE)
   canReceive: Boolean @join__field(graph: CORE)
   canPack: Boolean @join__field(graph: CORE)
+  isPlanned: Boolean @join__field(graph: CORE)
   toAggregate(filter: MaterialStatusFilter): MaterialStatusAggregateResult @join__field(graph: CORE)
 }
 
@@ -6400,6 +6805,7 @@ input MaterialStateTransitionFilter {
   id: [ID!]
   canReceive: Boolean
   canPack: Boolean
+  isPlanned: Boolean
   has: [MaterialStateTransitionHasFilter]
   and: [MaterialStateTransitionFilter]
   or: [MaterialStateTransitionFilter]
@@ -6411,6 +6817,7 @@ enum MaterialStateTransitionHasFilter {
   to
   canReceive
   canPack
+  isPlanned
 }
 
 input MaterialStateTransitionPatch {
@@ -6418,6 +6825,7 @@ input MaterialStateTransitionPatch {
   to: [MaterialStatusRef]
   canReceive: Boolean
   canPack: Boolean
+  isPlanned: Boolean
 }
 
 input MaterialStateTransitionRef {
@@ -6426,6 +6834,7 @@ input MaterialStateTransitionRef {
   to: [MaterialStatusRef]
   canReceive: Boolean
   canPack: Boolean
+  isPlanned: Boolean
 }
 
 type MaterialStatus
@@ -6435,6 +6844,8 @@ type MaterialStatus
   id: ID! @join__field(graph: CORE)
   isActive: Boolean @join__field(graph: CORE)
   code: String! @join__field(graph: CORE)
+  inventoryHoldingPolicy(filter: InventoryHoldingPolicyFilter, order: InventoryHoldingPolicyOrder, first: Int, offset: Int): [InventoryHoldingPolicy] @join__field(graph: CORE)
+  inventoryHoldingPolicyAggregate(filter: InventoryHoldingPolicyFilter): InventoryHoldingPolicyAggregateResult @join__field(graph: CORE)
 }
 
 type MaterialStatusAggregateResult {
@@ -6456,6 +6867,7 @@ input MaterialStatusFilter {
 enum MaterialStatusHasFilter {
   isActive
   code
+  inventoryHoldingPolicy
 }
 
 input MaterialStatusOrder {
@@ -6470,14 +6882,22 @@ enum MaterialStatusOrderable {
 
 input MaterialStatusPatch {
   isActive: Boolean
+  inventoryHoldingPolicy: [InventoryHoldingPolicyRef]
 }
 
 input MaterialStatusRef {
   id: ID
   isActive: Boolean
   code: String
+  inventoryHoldingPolicy: [InventoryHoldingPolicyRef]
 }
 
+"""
+Each separately identifiable quantity of the same material lot shall be presented as a material sublot.
+A material lot by be stored in separately identifiable quantities. All material sublots are part of the
+material lot, so they have the material lot's property values. A material sublot may be just a single item.
+ref-IEC62264-2 5.4.8
+"""
 type MaterialSubLot
   @join__owner(graph: CORE)
   @join__type(graph: CORE, key: "id")
@@ -6486,15 +6906,25 @@ type MaterialSubLot
   isActive: Boolean @join__field(graph: CORE)
   code: String! @join__field(graph: CORE)
   material(filter: MaterialDefinitionFilter): MaterialDefinition! @join__field(graph: CORE)
+  materialActual(filter: MaterialActualFilter, order: MaterialActualOrder, first: Int, offset: Int): [MaterialActual] @join__field(graph: CORE)
   description: String @join__field(graph: CORE)
   status(filter: MaterialStatusFilter): MaterialStatus! @join__field(graph: CORE)
   carrier(filter: CarrierFilter): Carrier @join__field(graph: CORE)
   storageLocation(filter: EquipmentFilter): Equipment @join__field(graph: CORE)
+  isAssembledFromSubLot(filter: MaterialSubLotFilter, order: MaterialSubLotOrder, first: Int, offset: Int): [MaterialSubLot] @join__field(graph: CORE)
+  isComponentOfSubLot(filter: MaterialSubLotFilter, order: MaterialSubLotOrder, first: Int, offset: Int): [MaterialSubLot] @join__field(graph: CORE)
+  isComponentOfLot(filter: MaterialLotFilter, order: MaterialLotOrder, first: Int, offset: Int): [MaterialLot] @join__field(graph: CORE)
+  isAssembledFromLot(filter: MaterialLotFilter, order: MaterialLotOrder, first: Int, offset: Int): [MaterialLot] @join__field(graph: CORE)
   quantity: String @join__field(graph: CORE)
   dataType: DataType @join__field(graph: CORE)
   unitOfMeasure(filter: UnitOfMeasureFilter): UnitOfMeasure @join__field(graph: CORE)
   properties(filter: PropertyFilter, order: PropertyOrder, first: Int, offset: Int): [Property] @join__field(graph: CORE)
   events(filter: InventoryTransactionFilter, order: InventoryTransactionOrder, first: Int, offset: Int): [InventoryTransaction] @join__field(graph: CORE)
+  materialActualAggregate(filter: MaterialActualFilter): MaterialActualAggregateResult @join__field(graph: CORE)
+  isAssembledFromSubLotAggregate(filter: MaterialSubLotFilter): MaterialSubLotAggregateResult @join__field(graph: CORE)
+  isComponentOfSubLotAggregate(filter: MaterialSubLotFilter): MaterialSubLotAggregateResult @join__field(graph: CORE)
+  isComponentOfLotAggregate(filter: MaterialLotFilter): MaterialLotAggregateResult @join__field(graph: CORE)
+  isAssembledFromLotAggregate(filter: MaterialLotFilter): MaterialLotAggregateResult @join__field(graph: CORE)
   propertiesAggregate(filter: PropertyFilter): PropertyAggregateResult @join__field(graph: CORE)
   eventsAggregate(filter: InventoryTransactionFilter): InventoryTransactionAggregateResult @join__field(graph: CORE)
 }
@@ -6523,10 +6953,15 @@ enum MaterialSubLotHasFilter {
   isActive
   code
   material
+  materialActual
   description
   status
   carrier
   storageLocation
+  isAssembledFromSubLot
+  isComponentOfSubLot
+  isComponentOfLot
+  isAssembledFromLot
   quantity
   dataType
   unitOfMeasure
@@ -6549,10 +6984,15 @@ enum MaterialSubLotOrderable {
 input MaterialSubLotPatch {
   isActive: Boolean
   material: MaterialDefinitionRef
+  materialActual: [MaterialActualRef]
   description: String
   status: MaterialStatusRef
   carrier: CarrierRef
   storageLocation: EquipmentRef
+  isAssembledFromSubLot: [MaterialSubLotRef]
+  isComponentOfSubLot: [MaterialSubLotRef]
+  isComponentOfLot: [MaterialLotRef]
+  isAssembledFromLot: [MaterialLotRef]
   quantity: String
   dataType: DataType
   unitOfMeasure: UnitOfMeasureRef
@@ -6565,10 +7005,15 @@ input MaterialSubLotRef {
   isActive: Boolean
   code: String
   material: MaterialDefinitionRef
+  materialActual: [MaterialActualRef]
   description: String
   status: MaterialStatusRef
   carrier: CarrierRef
   storageLocation: EquipmentRef
+  isAssembledFromSubLot: [MaterialSubLotRef]
+  isComponentOfSubLot: [MaterialSubLotRef]
+  isComponentOfLot: [MaterialLotRef]
+  isAssembledFromLot: [MaterialLotRef]
   quantity: String
   dataType: DataType
   unitOfMeasure: UnitOfMeasureRef
@@ -6875,6 +7320,15 @@ type Mutation {
   addJobResponse(input: [AddJobResponseInput!]!): AddJobResponsePayload @join__field(graph: CORE)
   updateJobResponse(input: UpdateJobResponseInput!): UpdateJobResponsePayload @join__field(graph: CORE)
   deleteJobResponse(filter: JobResponseFilter!): DeleteJobResponsePayload @join__field(graph: CORE)
+  addPersonnelActual(input: [AddPersonnelActualInput!]!): AddPersonnelActualPayload @join__field(graph: CORE)
+  updatePersonnelActual(input: UpdatePersonnelActualInput!): UpdatePersonnelActualPayload @join__field(graph: CORE)
+  deletePersonnelActual(filter: PersonnelActualFilter!): DeletePersonnelActualPayload @join__field(graph: CORE)
+  addEquipmentActual(input: [AddEquipmentActualInput!]!): AddEquipmentActualPayload @join__field(graph: CORE)
+  updateEquipmentActual(input: UpdateEquipmentActualInput!): UpdateEquipmentActualPayload @join__field(graph: CORE)
+  deleteEquipmentActual(filter: EquipmentActualFilter!): DeleteEquipmentActualPayload @join__field(graph: CORE)
+  addMaterialActual(input: [AddMaterialActualInput!]!): AddMaterialActualPayload @join__field(graph: CORE)
+  updateMaterialActual(input: UpdateMaterialActualInput!): UpdateMaterialActualPayload @join__field(graph: CORE)
+  deleteMaterialActual(filter: MaterialActualFilter!): DeleteMaterialActualPayload @join__field(graph: CORE)
   addEventLog(input: [AddEventLogInput!]!): AddEventLogPayload @join__field(graph: CORE)
   updateEventLog(input: UpdateEventLogInput!): UpdateEventLogPayload @join__field(graph: CORE)
   deleteEventLog(filter: EventLogFilter!): DeleteEventLogPayload @join__field(graph: CORE)
@@ -6956,6 +7410,9 @@ type Mutation {
   addInventoryTransaction(input: [AddInventoryTransactionInput!]!): AddInventoryTransactionPayload @join__field(graph: CORE)
   updateInventoryTransaction(input: UpdateInventoryTransactionInput!): UpdateInventoryTransactionPayload @join__field(graph: CORE)
   deleteInventoryTransaction(filter: InventoryTransactionFilter!): DeleteInventoryTransactionPayload @join__field(graph: CORE)
+  addInventoryHoldingPolicy(input: [AddInventoryHoldingPolicyInput!]!): AddInventoryHoldingPolicyPayload @join__field(graph: CORE)
+  updateInventoryHoldingPolicy(input: UpdateInventoryHoldingPolicyInput!): UpdateInventoryHoldingPolicyPayload @join__field(graph: CORE)
+  deleteInventoryHoldingPolicy(filter: InventoryHoldingPolicyFilter!): DeleteInventoryHoldingPolicyPayload @join__field(graph: CORE)
   addMaterialEquipment(input: [AddMaterialEquipmentInput!]!, upsert: Boolean): AddMaterialEquipmentPayload @join__field(graph: CORE)
   updateMaterialEquipment(input: UpdateMaterialEquipmentInput!): UpdateMaterialEquipmentPayload @join__field(graph: CORE)
   deleteMaterialEquipment(filter: MaterialEquipmentFilter!): DeleteMaterialEquipmentPayload @join__field(graph: CORE)
@@ -8129,8 +8586,10 @@ type Person
   description: String @join__field(graph: CORE)
   properties(filter: PropertyFilter, order: PropertyOrder, first: Int, offset: Int): [Property] @join__field(graph: CORE)
   memberOf(filter: PersonnelClassFilter, order: PersonnelClassOrder, first: Int, offset: Int): [PersonnelClass] @join__field(graph: CORE)
+  personnelActual(filter: PersonnelActualFilter, order: PersonnelActualOrder, first: Int, offset: Int): [PersonnelActual] @join__field(graph: CORE)
   propertiesAggregate(filter: PropertyFilter): PropertyAggregateResult @join__field(graph: CORE)
   memberOfAggregate(filter: PersonnelClassFilter): PersonnelClassAggregateResult @join__field(graph: CORE)
+  personnelActualAggregate(filter: PersonnelActualFilter): PersonnelActualAggregateResult @join__field(graph: CORE)
 }
 
 type PersonAggregateResult {
@@ -8157,6 +8616,71 @@ enum PersonHasFilter {
   description
   properties
   memberOf
+  personnelActual
+}
+
+type PersonnelActual
+  @join__owner(graph: CORE)
+  @join__type(graph: CORE, key: "id")
+{
+  id: ID! @join__field(graph: CORE)
+  isActive: Boolean @join__field(graph: CORE)
+  jobResponse(filter: JobResponseFilter): JobResponse! @join__field(graph: CORE)
+  person(filter: PersonFilter): Person @join__field(graph: CORE)
+  quantity: Float @join__field(graph: CORE)
+  quantityUoM(filter: UnitOfMeasureFilter): UnitOfMeasure @join__field(graph: CORE)
+}
+
+type PersonnelActualAggregateResult {
+  count: Int
+  quantityMin: Float
+  quantityMax: Float
+  quantitySum: Float
+  quantityAvg: Float
+}
+
+input PersonnelActualFilter {
+  id: [ID!]
+  isActive: Boolean
+  has: [PersonnelActualHasFilter]
+  and: [PersonnelActualFilter]
+  or: [PersonnelActualFilter]
+  not: PersonnelActualFilter
+}
+
+enum PersonnelActualHasFilter {
+  isActive
+  jobResponse
+  person
+  quantity
+  quantityUoM
+}
+
+input PersonnelActualOrder {
+  asc: PersonnelActualOrderable
+  desc: PersonnelActualOrderable
+  then: PersonnelActualOrder
+}
+
+enum PersonnelActualOrderable {
+  quantity
+}
+
+input PersonnelActualPatch {
+  isActive: Boolean
+  jobResponse: JobResponseRef
+  person: PersonRef
+  quantity: Float
+  quantityUoM: UnitOfMeasureRef
+}
+
+input PersonnelActualRef {
+  id: ID
+  isActive: Boolean
+  jobResponse: JobResponseRef
+  person: PersonRef
+  quantity: Float
+  quantityUoM: UnitOfMeasureRef
 }
 
 """
@@ -8344,6 +8868,7 @@ input PersonPatch {
   description: String
   properties: [PropertyRef]
   memberOf: [PersonnelClassRef]
+  personnelActual: [PersonnelActualRef]
 }
 
 input PersonRef {
@@ -8353,6 +8878,7 @@ input PersonRef {
   description: String
   properties: [PropertyRef]
   memberOf: [PersonnelClassRef]
+  personnelActual: [PersonnelActualRef]
 }
 
 type Point {
@@ -8869,6 +9395,15 @@ type Query {
   getJobResponse(id: ID!): JobResponse @join__field(graph: CORE)
   queryJobResponse(filter: JobResponseFilter, order: JobResponseOrder, first: Int, offset: Int): [JobResponse] @join__field(graph: CORE)
   aggregateJobResponse(filter: JobResponseFilter): JobResponseAggregateResult @join__field(graph: CORE)
+  getPersonnelActual(id: ID!): PersonnelActual @join__field(graph: CORE)
+  queryPersonnelActual(filter: PersonnelActualFilter, order: PersonnelActualOrder, first: Int, offset: Int): [PersonnelActual] @join__field(graph: CORE)
+  aggregatePersonnelActual(filter: PersonnelActualFilter): PersonnelActualAggregateResult @join__field(graph: CORE)
+  getEquipmentActual(id: ID!): EquipmentActual @join__field(graph: CORE)
+  queryEquipmentActual(filter: EquipmentActualFilter, order: EquipmentActualOrder, first: Int, offset: Int): [EquipmentActual] @join__field(graph: CORE)
+  aggregateEquipmentActual(filter: EquipmentActualFilter): EquipmentActualAggregateResult @join__field(graph: CORE)
+  getMaterialActual(id: ID!): MaterialActual @join__field(graph: CORE)
+  queryMaterialActual(filter: MaterialActualFilter, order: MaterialActualOrder, first: Int, offset: Int): [MaterialActual] @join__field(graph: CORE)
+  aggregateMaterialActual(filter: MaterialActualFilter): MaterialActualAggregateResult @join__field(graph: CORE)
   getEventLog(id: ID!): EventLog @join__field(graph: CORE)
   queryEventLog(filter: EventLogFilter, order: EventLogOrder, first: Int, offset: Int): [EventLog] @join__field(graph: CORE)
   aggregateEventLog(filter: EventLogFilter): EventLogAggregateResult @join__field(graph: CORE)
@@ -8950,6 +9485,9 @@ type Query {
   getInventoryTransaction(id: ID!): InventoryTransaction @join__field(graph: CORE)
   queryInventoryTransaction(filter: InventoryTransactionFilter, order: InventoryTransactionOrder, first: Int, offset: Int): [InventoryTransaction] @join__field(graph: CORE)
   aggregateInventoryTransaction(filter: InventoryTransactionFilter): InventoryTransactionAggregateResult @join__field(graph: CORE)
+  getInventoryHoldingPolicy(id: ID!): InventoryHoldingPolicy @join__field(graph: CORE)
+  queryInventoryHoldingPolicy(filter: InventoryHoldingPolicyFilter, order: InventoryHoldingPolicyOrder, first: Int, offset: Int): [InventoryHoldingPolicy] @join__field(graph: CORE)
+  aggregateInventoryHoldingPolicy(filter: InventoryHoldingPolicyFilter): InventoryHoldingPolicyAggregateResult @join__field(graph: CORE)
   getMaterialEquipment(id: ID, key: String): MaterialEquipment @join__field(graph: CORE)
   queryMaterialEquipment(filter: MaterialEquipmentFilter, order: MaterialEquipmentOrder, first: Int, offset: Int): [MaterialEquipment] @join__field(graph: CORE)
   aggregateMaterialEquipment(filter: MaterialEquipmentFilter): MaterialEquipmentAggregateResult @join__field(graph: CORE)
@@ -10461,6 +10999,17 @@ type UpdatedOrderStatus {
   updateType: String
 }
 
+input UpdateEquipmentActualInput {
+  filter: EquipmentActualFilter!
+  set: EquipmentActualPatch
+  remove: EquipmentActualPatch
+}
+
+type UpdateEquipmentActualPayload {
+  equipmentActual(filter: EquipmentActualFilter, order: EquipmentActualOrder, first: Int, offset: Int): [EquipmentActual]
+  numUids: Int
+}
+
 input UpdateEquipmentClassInput {
   filter: EquipmentClassFilter!
   set: EquipmentClassPatch
@@ -10593,6 +11142,17 @@ type UpdateInventoryHandlingRulePayload {
   numUids: Int
 }
 
+input UpdateInventoryHoldingPolicyInput {
+  filter: InventoryHoldingPolicyFilter!
+  set: InventoryHoldingPolicyPatch
+  remove: InventoryHoldingPolicyPatch
+}
+
+type UpdateInventoryHoldingPolicyPayload {
+  inventoryHoldingPolicy(filter: InventoryHoldingPolicyFilter, order: InventoryHoldingPolicyOrder, first: Int, offset: Int): [InventoryHoldingPolicy]
+  numUids: Int
+}
+
 input UpdateInventoryTransactionInput {
   filter: InventoryTransactionFilter!
   set: InventoryTransactionPatch
@@ -10645,6 +11205,17 @@ input UpdateLibreServiceInput {
 
 type UpdateLibreServicePayload {
   libreService(filter: LibreServiceFilter, order: LibreServiceOrder, first: Int, offset: Int): [LibreService]
+  numUids: Int
+}
+
+input UpdateMaterialActualInput {
+  filter: MaterialActualFilter!
+  set: MaterialActualPatch
+  remove: MaterialActualPatch
+}
+
+type UpdateMaterialActualPayload {
+  materialActual(filter: MaterialActualFilter, order: MaterialActualOrder, first: Int, offset: Int): [MaterialActual]
   numUids: Int
 }
 
@@ -10889,6 +11460,17 @@ input UpdatePersonInput {
   filter: PersonFilter!
   set: PersonPatch
   remove: PersonPatch
+}
+
+input UpdatePersonnelActualInput {
+  filter: PersonnelActualFilter!
+  set: PersonnelActualPatch
+  remove: PersonnelActualPatch
+}
+
+type UpdatePersonnelActualPayload {
+  personnelActual(filter: PersonnelActualFilter, order: PersonnelActualOrder, first: Int, offset: Int): [PersonnelActual]
+  numUids: Int
 }
 
 input UpdatePersonnelClassInput {

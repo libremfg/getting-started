@@ -40,7 +40,7 @@ services:
       - 8000:8000
     command: dgraph-ratel
   libre-ui:
-    image:  ghcr.io/spruik/libre-admin-ui:main
+    image:  ghcr.io/spruik/libre-admin-ui:latest
     ports:
       - 80:80
     environment:
@@ -64,37 +64,21 @@ services:
       - 8083:8083
       - 18083:18083
     restart: always
+    environment:
+      - EMQX_LOADED_PLUGINS=emqx_recon,emqx_retainer,emqx_management,emqx_dashboard,emqx_auth_mnesia
+      - EMQX_ALLOW_ANONYMOUS=true
+      - EMQX_ACL_NOMATCH=allow
     container_name: mqtt
     healthcheck:
       interval: 5s
       timeout: 3s
       retries: 5
       test: ["CMD", "curl", "-f", "http://mqtt:18083"]
-  libre-server:
-    image: ghcr.io/spruik/libre-server:0.0.4
+  libre-core:
+    image: ghcr.io/spruik/libre-core:latest
     restart: always
     ports:
-      - 4001:80
-    environment:
-      - LIBRE_DQL_URL=alpha:9080
-      - LIBRE_GRAPHQL_ENDPOINT=http://alpha:8080/graphql
-      - INFLUX_TOKEN=mytokenmytokenmytoken
-      - INFLUX_ORG=Libre
-      - INFLUX_BUCKET=Libre
-      - INFLUX_URL=http://influxdb:8086
-    volumes:
-      - ./libre-server/config:/etc/config
-    depends_on:
-      alpha:
-        condition: service_healthy
-      mqtt:
-        condition: service_healthy
-      influxdb:
-        condition: service_healthy
-    container_name: libre-server
-  libre-core:
-    image: ghcr.io/spruik/libre-core:0.2.0
-    restart: always
+      - 4002:4002
     environment:
       - LIBRE_CONFIG_FILE=/etc/config/config.json
     volumes:
@@ -105,8 +89,39 @@ services:
       - "zero"
       - "dgraph-init"
     container_name: libre-core
+  libre-scheduler:
+    image: ghcr.io/spruik/libre-scheduler:latest
+    restart: always
+    ports:
+      - 10001:10001
+    environment:
+      - LIBRE_CONFIG_FILE=/etc/config/config.json
+    volumes:
+      - ./libre-core/config:/etc/config
+    depends_on:
+      - "influxdb"
+      - "mqtt"
+      - "zero"
+      - "dgraph-init"
+    container_name: libre-scheduler
+  libre-wms:
+    image: ghcr.io/spruik/libre-wms:latest
+    restart: always
+    ports:
+      - 7000:7000
+    environment:
+      - LIBRE_CONFIG_FILE=/etc/config/config.json
+    volumes:
+      - ./libre-core/config:/etc/config
+    depends_on:
+      - "influxdb"
+      - "mqtt"
+      - "zero"
+      - "dgraph-init"
+    container_name: libre-wms
+
   graphql-pubsub:
-    image: ghcr.io/spruik/graphql-pubsub:0.0.3
+    image: ghcr.io/spruik/graphql-pubsub:latest
     restart: always
     environment:
       - LIBRE_CONFIG_FILE=/etc/config/config.json
@@ -121,7 +136,7 @@ services:
         condition: service_healthy
     container_name: graphql-pubsub
   libre-workflow-pubsub:
-    image: ghcr.io/spruik/libre-workflow-pubsub:0.0.1
+    image: ghcr.io/spruik/libre-workflow-pubsub:latest
     restart: always
     environment:
       - LIBRE_CONFIG_FILE=/etc/config/config.json
@@ -178,17 +193,22 @@ services:
   libre-gateway:
     ports:
       - 4000:4000
-    image: ghcr.io/spruik/libre-gateway:tom
+    image: ghcr.io/spruik/libre-gateway:latest
     restart: always
     container_name: libre-gateway
     environment:
       - GRAPHQL_ENDPOINT=http://alpha:8080
-      - LIBRE_SERVER_ENDPOINT=http://libre-server
+      - LIBRE_CORE_ENDPOINT=http://docker.host.internal:4002
+      - LIBRE_SCHEDULER_ENDPOINT=http://docker.host.internal:10001
+      - LIBRE_WMS_ENDPOINT=http://docker.host.internal:7000
       - LIBRE_AUTH_CERT_URL=https://demo-libremfg.us.auth0.com/.well-known/jwks.json
     volumes:
       - type: bind
         source: ./libre-gateway/supergraph.graphql
         target: /app/supergraph.graphql
+      - type: bind
+        source: ./libre-gateway/supergraph.yaml
+        target: /app/supergraph.yaml
     depends_on:
       alpha:
         condition: service_healthy
@@ -202,7 +222,7 @@ services:
       retries: 5
       test: ["CMD", "curl", "-f", "http://libre-gateway:4000"]
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:8.2.1
     container_name: grafana
     restart: always
     environment:
@@ -245,3 +265,20 @@ services:
       influxdb:
         condition: service_healthy
     container_name: libre-edge-agent
+  appsmith:
+    image: appsmith/appsmith-ce
+    container_name: appsmith-ce
+    ports:
+      - "3080:80"
+      - "443:443"
+      - "9001:9001"
+    volumes:
+      - ./stacks:/appsmith-stacks
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+  auto_update:
+    image: containrrr/watchtower:latest-dev
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    # Update check interval in seconds.
+    command: --interval 300 --label-enable --cleanup

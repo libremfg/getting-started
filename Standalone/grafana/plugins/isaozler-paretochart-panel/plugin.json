@@ -19,8 +19,8 @@
       { "name": "Pareto Chart Dashboard Impression", "path": "img/production-env--impression.jpg" },
       { "name": "Pareto Chart Edit Dashboard", "path": "img/pareto-chart-edit-panel.jpg" }
     ],
-    "version": "0.3.1",
-    "updated": "2020-10-22"
+    "version": "0.3.2",
+    "updated": "2021-10-18"
   },
   "dependencies": {
     "grafanaDependency": ">=7.0.0",

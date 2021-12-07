@@ -6,7 +6,7 @@
       {"MAIN": {"topic":"MAIN"}},
       {"server": {"topic":"SERVER"}},
       {"Influxdb" : {"topic": "Influxdb"}},
-      {"PubSubMQTT" : {"topic": "PubSubMQTT"}},
+      {"PubSubMQTT" : {"topic": "PubSubMQTT", "level": "INFO"}},
       {"PlcConnectorMQTT" : {"topic": "PLCMQTT"}},
       {"graphQLTrans" : {"topic": "GQLTRANS"}},
       {"RESTAPI": {"topic":"RESTAPI"}},
@@ -40,6 +40,15 @@
     "TAG_DATA_CATEGORY": "EdgeTagChange",
     "EVENT_CATEGORY": "EdgeEvent"
   },
+  "cacheConnectorMQTT" : {
+    "MQTT_SERVER":   "mqtt://mqtt:1883",
+    "MQTT_USER":     "admin",
+    "MQTT_PWD":      "public",
+    "MQTT_SVC_NAME": "CoreServiceEdgeConnector",
+    "TOPIC_TEMPLATE": "<EQNAME>/<CATEGORY>/<TAGNAME>",
+    "TAG_DATA_CATEGORY": "EdgeTagChange",
+    "EVENT_CATEGORY": "EdgeEvent"
+  },
   "GraphQLSubscriber": {
     "GRAPHQL_URL": "http://alpha:8080/graphql"
   },
@@ -53,8 +62,13 @@
   "equipmentCache" : {
     "MonitorChanges" : true
   },
+  "equipmentFinder" : {
+    "ACTIVE_EQ_LEVELS": "Unit",
+    "INCLUDE_EQUIPMENT": "Site/Area/Line1",
+    "EXCLUDE_EQUIPMENT": "MySite/MyArea/ProdLineOEE"
+  },
   "RESTAPI": {
-    "PORT" : "28080"
+    "PORT" : "4002"
   },
   "CORE_FXNS": {
     "tagChangeWaitLimit": 30
@@ -67,26 +81,23 @@
     "loggerHook": "calendarService",
     "tickDuration": "60s"
   },
-  "LibreConnectorMQTT" : {
-    "loggerHook": "LibreConnectorMQTT",
-    "MQTT_SERVER":   "mqtt://mqtt:1883",
-    "MQTT_USER":     "admin",
-    "MQTT_PWD":      "public",
-    "MQTT_SVC_NAME": "CoreServiceLibreConnector",
-    "TOPIC_TEMPLATE": "<EQNAME>/<CATEGORY>/<TAGNAME>",
-    "TAG_DATA_CATEGORY": "EdgeTagChange",
-    "EVENT_CATEGORY": "EdgeEvent"
-  },
   "EquipmentManager" : {
     "eqPropMeasurementName" : "EquipmentPropertyValues",
     "messageClassToMeasurementMap": {
       "EventLog": "eventLog",
       "JobOrder": "jobOrder",
       "JobRequest": "jobRequest",
-      "PerformanceLog": "runRateLog"
+      "PerformanceLog": "runRateLog",
+      "QuantityLog": "quantityLog"
     }
   },
   "RESTAPI": {
     "PORT" : "28080"
+  },
+  "libreCoreService": {
+    "GRAPHQL_PORT": 4002,
+    "LIBRE_DQL_URL": "alpha:9080",
+    "DGRAPH_GRAPHQL_URL": "http://alpha:8080/graphql",
+    "EQUIPMENT_CONFIG_TOPIC": "Libre/subscriptions/equipmentConfig/#"
   }
 }

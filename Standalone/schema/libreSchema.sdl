@@ -2,7 +2,7 @@
 # define our authorization model here
 ###########################################################################
 
-type User  {
+type User  @key(fields:"id"){
     id:ID!
     username: String! @id
     name: String
@@ -16,7 +16,7 @@ type UserRole {
     id:ID!
     role:Role! @hasInverse(field:hasMembers)
     user:User! @hasInverse(field:hasRole)
-    responsibilities:[Equipment]!
+    responsibilities:[Equipment]! @hasInverse(field:userRoles)
     isActive:Boolean
 }
 
@@ -177,9 +177,6 @@ enum AccessRights {
    getMaterialUnit
    queryMaterialUnit
    aggregateMaterialUnit
-   getInventoryTransaction
-   queryInventoryTransaction
-   aggregateInventoryTransaction
    getMaterialEquipment
    queryMaterialEquipment
    aggregateMaterialEquipment
@@ -255,9 +252,6 @@ enum AccessRights {
    getForm
    queryForm
    aggregateForm
-   getASNStaging
-   queryASNStaging
-   aggregateASNStaging
    getPartner
    queryPartner
    aggregatePartner
@@ -423,9 +417,6 @@ enum AccessRights {
    addMaterialUnit
    updateMaterialUnit
    deleteMaterialUnit
-   addInventoryTransaction
-   updateInventoryTransaction
-   deleteInventoryTransaction
    addMaterialEquipment
    updateMaterialEquipment
    deleteMaterialEquipment
@@ -501,9 +492,6 @@ enum AccessRights {
    addForm
    updateForm
    deleteForm
-   addASNStaging
-   updateASNStaging
-   deleteASNStaging
    addPartner
    updatePartner
    deletePartner
@@ -599,6 +587,7 @@ type OperationsRequest @withSubscription @key(fields:"id"){
     quantity:Float!
     quantityUoM:UnitOfMeasure!
     jobOrders:[JobOrder] @hasInverse(field:operationsRequest)
+    equipment:Equipment @hasInverse(field:operationsRequests)
 }
 type RequestState @key(fields:"id") {
     id:ID!
@@ -836,6 +825,12 @@ enum DispatchStatus{
     CLOSED
 }
 
+""" Define the allowable DispatchStatus transitions for JobOrder.dispatchStatus"""
+type JobOrderDispatchStateModel {
+    fromStatus: DispatchStatus!
+    allowedTransition: [DispatchStatus]
+}
+
 type JobOrderNote {
     id:ID!
     comment:String
@@ -862,6 +857,36 @@ type JobResponse @withSubscription @key(fields:"id"){
     jobOrder:JobOrder @hasInverse(field:jobResponses)
     events:[EventLog] @hasInverse(field:jobResponse)
     quantities:[QuantityLog] @hasInverse(field:jobResponse)
+    personnelActual:[PersonnelActual] @hasInverse(field:jobResponse)
+    equipmentActual:[EquipmentActual] @hasInverse(field:jobResponse)
+    materialActual:[MaterialActual] @hasInverse(field:jobResponse)
+}
+type PersonnelActual @withSubscription @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    jobResponse:JobResponse! @hasInverse(field:personnelActual)
+    person:Person @hasInverse(field:personnelActual)
+    quantity:Float
+    quantityUoM:UnitOfMeasure
+}
+type EquipmentActual @withSubscription @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    jobResponse:JobResponse! @hasInverse(field:equipmentActual)
+    equipment:Equipment @hasInverse(field:equipmentActual)
+    quantity:Float
+    quantityUoM:UnitOfMeasure
+}
+type MaterialActual @withSubscription @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    jobResponse:JobResponse! @hasInverse(field:materialActual)
+    materialDefinition:MaterialDefinition @hasInverse(field:materialActual)
+    materialLot:MaterialLot @hasInverse(field:materialActual)
+    materialSubLot:MaterialSubLot @hasInverse(field:materialActual)
+    materialUse:MaterialUse
+    quantity:Float
+    quantityUoM:UnitOfMeasure
 }
 type EventLog @withSubscription @key(fields:"id"){
     id:ID!
@@ -916,8 +941,11 @@ type MaterialSpecification @withSubscription @key(fields:"id") {
      material:MaterialDefinition @hasInverse(field:workSpecifications)
      materialClass:MaterialClass
      description:String
-     materialUse:MaterialUse!
+     materialUse:MaterialUse! @search(by: [hash])
+     allowedStates:[MaterialStatus]
      isTracked:Boolean
+     isBackFlushed:Boolean @search
+     backFlushFromLocation:Equipment
      quantity:Float
      uom:UnitOfMeasure
 }
@@ -954,16 +982,25 @@ type DashboardConfig {
     id:ID!
     name:String! @id
     isActive:Boolean @search
-    panels: [DashboardPanelConfig]
+    panels: [DashboardPanelConfig] @hasInverse(field:dashboard)
 }
 type DashboardPanelConfig {
     id:ID!
+    dashboard:DashboardConfig @hasInverse(field:panels)
     widgetName: String @search(by: [hash])
+    properties: [DashboardWidgetConfigProperty] @hasInverse(field:panel)
     x: Int
     y: Int
     w: Int
     h: Int
 }
+type DashboardWidgetConfigProperty {
+    id:ID!
+    panel:DashboardPanelConfig @hasInverse(field:properties)
+    key:String!
+    value:String!
+}
+
 # ################################################################################
 # Start of the Equipment domain entities
 # ################################################################################
@@ -971,6 +1008,7 @@ type DashboardPanelConfig {
 type Equipment @withSubscription @key(fields:"id") {
     id:ID!
     isActive:Boolean @search
+    userRoles:[UserRole] @hasInverse(field:responsibilities)
     name : String! @search(by: [hash])
     label : String @search(by: [hash])
     displayName : String @search(by: [hash])
@@ -980,13 +1018,13 @@ type Equipment @withSubscription @key(fields:"id") {
     children: [Equipment] @hasInverse(field:parent)
     equipmentClass: EquipmentClass
     equipmentLevel: EquipmentElementLevel @search
-    materialEquipment:[MaterialEquipment] @hasInverse(field:equipment)
+    equipmentActual: [EquipmentActual] @hasInverse(field:equipment)
     properties: [Property] @hasInverse(field:equipment)
     propertyNameAliases:[PropertyNameAlias] @hasInverse(field:equipment)
     carriers:[Carrier] @hasInverse(field:storageLocation)
     materialSubLots: [MaterialSubLot] @hasInverse(field:storageLocation)
-    transactions:[InventoryTransaction] @hasInverse(field:storageLocation)
     inventoryHandlingRules:[InventoryHandlingRule] @hasInverse(field:warehouse)
+    operationsRequests:[OperationsRequest] @hasInverse(field:equipment)
     dataProvider:DataProvider
     dataProviderConnection:String
     addressTemplate:String
@@ -1253,17 +1291,17 @@ enum MachineState {
     Idle
     Starting
     Execute
-    UnHolding
+    Unholding
     Held
     Holding
     Completing
     Complete
-    UnSuspending
+    Unsuspending
     Suspended
     Suspending
     Aborting
     Aborted
-    Cleaning
+    Clearing
     Stopping
 }
 type ReasonCategory @key(fields:"id") {
@@ -1341,6 +1379,7 @@ type MaterialDefinition @withSubscription @key(fields:"id") {
     code:String! @id
     name:String @search(by: [hash])
     materialClass:MaterialClass
+    materialActual:[MaterialActual] @hasInverse(field:materialDefinition)
     description:String
     properties:[Property]
     scheduleSortOrder:Int
@@ -1348,17 +1387,17 @@ type MaterialDefinition @withSubscription @key(fields:"id") {
     uomConversions:[UnitOfMeasureConversion] @hasInverse(field:material)
     workSpecifications:[MaterialSpecification] @hasInverse(field:material)
     operationsDefinitions:[OperationsDefinition] @hasInverse(field:material)
+    lots:[MaterialLot] @hasInverse(field:material)
     sublots:[MaterialSubLot] @hasInverse(field:material)
     units:[MaterialUnit] @hasInverse(field:material)
-    events:[InventoryTransaction] @hasInverse(field:material)
     value:Float
     valueCurrency:String
     weightKG:Float
     supplier:String
     serialMask:String
     inventoryHandlingPolicy:InventoryHandlingPolicy
+    inventoryHoldingPolicy:[InventoryHoldingPolicy] @hasInverse(field:material)
     alternates:[MaterialAlternate] @hasInverse(field:material)
-    materialEquipment:[MaterialEquipment] @hasInverse(field:material)
     shipmentItems:[ShipmentItem] @hasInverse(field:material)
     OrderLines:[OrderLine] @hasInverse(field:material)
     transferrableMaterials: [MaterialDefinition]
@@ -1381,28 +1420,50 @@ type Carrier @key(fields:"id") {
     barcodeImage:String
     owner: Partner @hasInverse(field:carriers)
     subLots:[MaterialSubLot] @hasInverse(field:carrier)
-    events:[InventoryTransaction] @hasInverse(field:carrier)
 }
+"""
+A uniquely identified specific amount of material, either countable or weighable shall be presented as a material lot.
+A material lot describes the planned or actual total quantity or amount of material available, its current state
+and its specific property values.
+ref-IEC62264-2 5.4.6
+"""
 type MaterialLot @withSubscription @key(fields:"id") {
     id:ID!
     isActive:Boolean @search
     code:String! @id
     description:String
+    properties:[Property]
+    material:MaterialDefinition! @hasInverse(field:lots)
+    materialActual:[MaterialActual] @hasInverse(field:materialLot)
+    isAssembledFromLot:[MaterialLot] @hasInverse(field:isComponentOfLot)
+    isComponentOfLot:[MaterialLot] @hasInverse(field:isAssembledFromLot)
+    isAssembledFromSubLot:[MaterialSubLot] @hasInverse(field:isComponentOfLot)
+    isComponentOfSubLot:[MaterialSubLot] @hasInverse(field:isAssembledFromLot)
 }
+"""
+Each separately identifiable quantity of the same material lot shall be presented as a material sublot.
+A material lot by be stored in separately identifiable quantities. All material sublots are part of the
+material lot, so they have the material lot's property values. A material sublot may be just a single item.
+ref-IEC62264-2 5.4.8
+"""
 type MaterialSubLot @withSubscription  @key(fields:"id"){
     id:ID!
     isActive:Boolean @search
     code:String! @id
     material:MaterialDefinition! @hasInverse(field:sublots)
+    materialActual:[MaterialActual] @hasInverse(field:materialSubLot)
     description:String
     status:MaterialStatus!
     carrier:Carrier @hasInverse(field:subLots)
     storageLocation:Equipment  @hasInverse(field:materialSubLots)
+    isAssembledFromSubLot:[MaterialSubLot] @hasInverse(field:isComponentOfSubLot)
+    isComponentOfSubLot:[MaterialSubLot] @hasInverse(field:isAssembledFromSubLot)
+    isComponentOfLot:[MaterialLot] @hasInverse(field:isAssembledFromSubLot)
+    isAssembledFromLot:[MaterialLot] @hasInverse(field:isComponentOfSubLot)
     quantity:String
     dataType:DataType
     unitOfMeasure:UnitOfMeasure
     properties:[Property]
-    events:[InventoryTransaction] @hasInverse(field:materialSubLot)
 }
 type MaterialUnit @withSubscription @key(fields:"id") {
     id:ID!
@@ -1410,44 +1471,21 @@ type MaterialUnit @withSubscription @key(fields:"id") {
     serialNumber:String! @id @search(by: [hash])
     material:MaterialDefinition! @hasInverse(field:units)
     properties:[Property]
-    events:[InventoryTransaction] @hasInverse(field:materialUnit)
-}
-"""
-A movement of material. The Inventory Transaction represents an immutable ledger of entries.
-Most transactions will record 2 entries with the same transactionId, a debit and a credit like
-a financial ledger.
-All transactions should be added through the custom mutation, so we disable the automatically generated mutations.
-"""
-type InventoryTransaction @key(fields:"id") {
-    id:ID!
-    transactionId:String! @search(by: [hash])
-    user:User
-    owner:Partner
-    previous:InventoryTransaction @hasInverse(field:next)
-    next:InventoryTransaction @hasInverse(field:previous)
-    timestamp:DateTime!
-    effectiveTimestamp:DateTime!
-    materialSubLot:MaterialSubLot @hasInverse(field:events)
-    materialUnit:MaterialUnit @hasInverse(field:events)
-    carrier:Carrier @hasInverse(field:events)
-    status:MaterialStatus!
-    storageLocation:Equipment @hasInverse(field:transactions)
-    material:MaterialDefinition! @hasInverse(field:events)
-    materialUse:MaterialUse!
-    shipmentItem:ShipmentItem @hasInverse(field:transactions)
-    quantity:Float!
 }
 
-type MaterialEquipment  @key(fields:"id"){
+"""
+The settings used to plan for when more material should be processed or purchased
+"""
+type InventoryHoldingPolicy @key(fields:"id"){
     id:ID!
-    key:String! @id @search(by: [hash])
     isActive:Boolean @search
-    material:MaterialDefinition! @hasInverse(field:materialEquipment)
-    equipment:Equipment! @hasInverse(field:materialEquipment)
+    material:MaterialDefinition! @hasInverse(field:inventoryHoldingPolicy)
+    inventoryHandlingRule:InventoryHandlingRule! @hasInverse(field:inventoryHoldingPolicy)
+    materialStatus:MaterialStatus! @hasInverse(field:inventoryHoldingPolicy)
     inventoryMax: Int
     inventoryMin: Int
-    sortOrder: Int
 }
+
 type UnitOfMeasure @withSubscription @key(fields:"id") {
     id:ID!
     isActive:Boolean @search
@@ -1467,6 +1505,7 @@ type MaterialStatus @withSubscription @key(fields:"id") {
     id:ID!
     isActive:Boolean @search
     code:String! @id @search(by: [hash])
+    inventoryHoldingPolicy:[InventoryHoldingPolicy] @hasInverse(field:materialStatus)
 }
 type MaterialStateModel @key(fields:"id") {
     id:ID!
@@ -1481,6 +1520,7 @@ type MaterialStateTransition @key(fields:"id") {
     to: [MaterialStatus]
     canReceive:Boolean @search
     canPack:Boolean @search
+    isPlanned:Boolean @search
 }
 
 # ################################################################################
@@ -1505,6 +1545,7 @@ type Person @withSubscription  @key(fields:"id"){
     description:String
     properties:[Property]
     memberOf:[PersonnelClass] @hasInverse(field:persons)
+    personnelActual:[PersonnelActual] @hasInverse(field:person)
 }
 type TestSpecification @withSubscription @key(fields:"id") {
     id:ID!
@@ -1816,16 +1857,6 @@ type Form @withSubscription @key(fields:"id") {
 # ################################################################################
 # Start of the Warehouse Management Entities
 # ################################################################################
-type ASNStaging  @key(fields:"id"){
-    id:ID!
-    orderNumber:String! @search(by: [fulltext])
-    materialCode:String! @search(by: [fulltext])
-    serialNumber:String @search(by: [fulltext])
-    quantity:Int!
-    isValid:Boolean
-    errorDescription:String
-    workflowInstanceId:String! @search(by: [hash])
-}
 type Partner  @key(fields:"id"){
     id:ID!
     isActive:Boolean @search
@@ -1847,6 +1878,17 @@ type Partner  @key(fields:"id"){
     carriers: [Carrier] @hasInverse(field:owner)
     fromOrders: [Order] @hasInverse(field:shipFromPartner)
     toOrders: [Order] @hasInverse(field:shipToPartner)
+    shippingAccounts: [ShippingAccount] @hasInverse(field:partner)
+}
+type ShippingAccount   @key(fields:"id"){
+    id:ID!
+    isActive:Boolean @search
+    partner: Partner @hasInverse(field:shippingAccounts)
+    transportCompany: TransportCompany @search
+    warehouse: Equipment
+    accountNumber: String
+    username: String
+    secret: String
 }
 enum StockType{
     NEW_STOCK
@@ -1872,6 +1914,7 @@ type InventoryHandlingRule @key(fields:"id") {
     warehouse:[Equipment!]! @hasInverse(field:inventoryHandlingRules)
     stateModel:MaterialStateModel! @hasInverse(field:inventoryHandlingRules)
     inventoryHandlingPolicy:InventoryHandlingPolicy! @hasInverse(field:rules)
+    inventoryHoldingPolicy:[InventoryHoldingPolicy] @hasInverse(field:inventoryHandlingRule)
 }
 type Address  @key(fields:"id"){
     id:ID!
@@ -1993,7 +2036,6 @@ type ShipmentItem  @key(fields:"id"){
     shipment:Shipment @hasInverse(field:items)
     status:ShipmentItemStatus!
     material:MaterialDefinition @hasInverse(field:shipmentItems)
-    transactions:[InventoryTransaction] @hasInverse(field:shipmentItem)
     plannedQuantity:Int
     isParcel:Boolean @search
     bin:Equipment @hasInverse(field:shipmentItems)

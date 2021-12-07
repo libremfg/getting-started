@@ -1,0 +1,21 @@
+{
+  "libreLogger" : {
+    "defaultLevel": "DEBUG",
+    "defaultDestination": "CONSOLE",
+    "loggers": [
+      {"MAIN": {"topic":"MAIN"}},
+      {"server": {"topic":"SERVER"}}
+    ]
+  },
+  "libreDataStoreGraphQL" : {
+    "GRAPHQL_URL": "http://localhost:8080/graphql",
+    "LIBRE_DQL_URL": "http://localhost:9080"
+  },
+  "influxdb" : {
+    "loggerHook" : "Influxdb",
+    "serverURL" : "https://dev-influx.libremfg.ai",
+    "authToken" : "5Utxi0UwKcWEcWH1mnZX7RyDMfjT76z9nv1r672-ThWYkKmI1ZpFnx6PQSnxDW9ImGRtRZ4NGLC5kOZ4-r0SoQ==",
+    "org" : "Libre",
+    "bucket" : "Libre"
+  }
+}
