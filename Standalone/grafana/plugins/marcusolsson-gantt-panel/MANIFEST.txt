@@ -8,28 +8,28 @@ Hash: SHA512
   "signedByOrg": "marcusolsson",
   "signedByOrgName": "Marcus Olsson",
   "plugin": "marcusolsson-gantt-panel",
-  "version": "0.7.4",
-  "time": 1630847863678,
+  "version": "0.7.5",
+  "time": 1641552991497,
   "keyId": "7e4d0c6a708866e7",
   "files": {
-    "module.js.map": "29a2dba2fd25e2d7c6f107d922e7fac4790d3d944fc3d92950a05c80e9007f3c",
-    "CHANGELOG.md": "74e540ac1f9b90f5f1be76beaa1a4fd29f213c69bf4e7336ed3a11174d36db75",
-    "module.js": "61cdac78545abe5c085fae3f87c308693b7862da80cd5722e23b7cac1d85abd0",
+    "CHANGELOG.md": "bbc5ce985c5fd5d23af9a35675543e8fc43b408796b6ecca409e16c368f4333c",
+    "module.js.map": "330647eae34cd9e6b993fecaf4cc8316757f8bf84e839e289c7b21e02ce07f14",
+    "module.js": "4fa4e704d6e2621785cd4ded595f3f50f20399cb2524134c550480ff10da7d89",
     "img/light.png": "fcb10b8798a4f3b60b064d9e6eaf64e1221d1f161de985e73ce78d3802b24a36",
     "img/dark.png": "a99b6f7e1cdc1cf8a5b1d5558bed4ee9b2998063b2c0d8932bf76b20241fead4",
     "img/logo.svg": "360d6e805c3d99714c01ee23efbdbb84bd9c279471acec4d5bed0901a8488e22",
-    "LICENSE": "73852a67e3154ce23adc3d8e8047e6859039c9b1fcb8b428612e30bd908230af",
-    "README.md": "0e03eee69e33703ac62e4ea70ad587231ea3dc05dea461f2123bb679af446f41",
-    "plugin.json": "05f1e3b37666799b20b1edbd4a181139a39d221363827015e93321ed8774363f"
+    "LICENSE": "5ab170e6de9123e3d011f1cd05e8dc2586954c1e889aac499bf5d98dc83e2839",
+    "plugin.json": "447f276abdbd40e83609a4ec15e290321b61dda1033b3a3dfda8b773fce1a21e",
+    "README.md": "0e03eee69e33703ac62e4ea70ad587231ea3dc05dea461f2123bb679af446f41"
   }
 }
 -----BEGIN PGP SIGNATURE-----
 Version: OpenPGP.js v4.10.1
 Comment: https://openpgpjs.org
 
-wqEEARMKAAYFAmE0w3cACgkQfk0ManCIZueePQIJAUA8ugkPoWlQg2mOrUtQ
-QDBDW2PTjcVrliWRkbi/rEcEs3bBLmtfkm8xn/lmxV2ucGDHBzHNxqcV+lwz
-7NMWVnZPAgQK34/Se4AzYkYnhKM7NiDki1yJ6OyGY3APeyutq499s+ZkIz7O
-DhLA5lT97HhR92RP9k72aeJQsDszaiv4xU+Cdg==
-=dJ+/
+wqAEARMKAAYFAmHYHF8ACgkQfk0ManCIZue3hAIIr8ZSCXvCRkETaM6z8rCw
+K2RGcAiE3DGGKSEc4h40OTlPa+fNi6OwIgoLzEJdvYsGSiSJKpGfHvcuceUC
+nk8FxxsCBjjfXa5RSzsk9LbVgEE1oozrnEjMzbrU6LUn6LMpb3jvHivfeHhf
+K6tPQ0kiehTwPvD5xoIG2xMGTd+tQMnf+Ydq
+=TDaD
 -----END PGP SIGNATURE-----

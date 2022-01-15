@@ -21,8 +21,8 @@
       { "name": "Gantt (Dark)", "path": "img/dark.png" },
       { "name": "Gantt (Light)", "path": "img/light.png" }
     ],
-    "version": "0.7.4",
-    "updated": "2021-09-05"
+    "version": "0.7.5",
+    "updated": "2022-01-07"
   },
 
   "dependencies": {

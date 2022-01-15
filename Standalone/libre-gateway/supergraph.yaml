@@ -1,0 +1,10 @@
+# Copyright 2021 Libre Technologies LLC
+subgraphs:
+  schema:
+    routing_url: http://host.docker.internal:8080/graphql
+    schema:
+      file: ./subgraphs/schema-mod.graphql
+  core:
+    routing_url: http://host.docker.internal:4002/query
+    schema:
+      file: ./subgraphs/core.graphql

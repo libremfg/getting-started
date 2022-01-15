@@ -8,29 +8,30 @@ Hash: SHA512
   "signedByOrg": "isaozler",
   "signedByOrgName": "isaozler",
   "plugin": "isaozler-paretochart-panel",
-  "version": "0.3.1",
-  "time": 1603372560562,
+  "version": "0.3.2",
+  "time": 1634578771777,
   "keyId": "7e4d0c6a708866e7",
   "files": {
-    "module.js.LICENSE.txt": "0d8f66cd4afb566cb5b7e1540c68f43b939d3eba12ace290f18abc4f4cb53ed0",
-    "plugin.json": "c0d85061e6a40d983645609cca70a31ff5d3e73fac4f9116c19498a62bb7ac81",
-    "module.js.map": "3e67f0ac4e81f73469af1639919e8bf1cda3b429a2b6bb3eb99c41b0171baf18",
-    "module.js": "bb8d403096e95ebbedd29b3c24d197c387c8ba636e34270057dbe41d8fa8ff52",
-    "README.md": "947f70f475b673392e5160859d7853f5174c07d75694e9aa32b6bcbe28338ec2",
-    "index.html": "2fa2c4168c5bb7b8502989f437e4a1a71e663702b0ec9c01530215c8c026dcaf",
+    "README.md": "f0f6cc5bedf2ae869608d7c92e1279b928927a677325109e86792b02784e879b",
     "LICENSE": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
+    "module.js": "4e9e68d002a5f30100b50c4f90a9f9590fb449b0e0765dbd6e7744f9dfc3bfbd",
+    "module.js.LICENSE.txt": "0d8f66cd4afb566cb5b7e1540c68f43b939d3eba12ace290f18abc4f4cb53ed0",
     "img/logo.svg": "e7c5922188799e8471cc135b191d78b9ad8a3f1480c5e14e2310867d23c6b40e",
+    "img/machines--icon.svg": "b876d9beeec3ba18949b31a4777a06f60c90e5192e3794fadab69e92c4980d23",
     "img/production-env--impression.jpg": "ac0a3f596f3058500935563be4fac11a51902663d267ee8c9d5b075650049630",
-    "img/pareto-chart-edit-panel.jpg": "d20e4634c6b5de6e0432503a8e155c89ba6a4ffd29d748ae10b7da208eeca9aa"
+    "img/pareto-chart-edit-panel.jpg": "d20e4634c6b5de6e0432503a8e155c89ba6a4ffd29d748ae10b7da208eeca9aa",
+    "index.html": "2fa2c4168c5bb7b8502989f437e4a1a71e663702b0ec9c01530215c8c026dcaf",
+    "plugin.json": "c832698cb5f2eeec85fca1cd85081f2af35b5eb6ce27a9292fa2dd7966755e3d",
+    "module.js.map": "0739a317602f0de352a62fcb6afce7f38291caca87edb8deb835de2dd05ab295"
   }
 }
 -----BEGIN PGP SIGNATURE-----
 Version: OpenPGP.js v4.10.1
 Comment: https://openpgpjs.org
 
-wqEEARMKAAYFAl+RhhAACgkQfk0ManCIZuf4gAIFFq2eznXc1RDNJUP6g3mL
-Tpo1o27Sw1MdC8y1QE7M6FzJZIsSvFL+I3fm/DW7B25G3VDx9ufYLYeOrZcH
-WnRXyigCCQGBezKGNgce2MV9k6ATpRhpTiyLSmotYZof+uEvLG02gxUejgaC
-VDxfkaAQtFXqJt3reSW93luIPX7/yuwt6Gtz1Q==
-=uNqj
+wqIEARMKAAYFAmFtsVMACgkQfk0ManCIZueUmwIJAVkLXZanpUyVBcWWc17f
+rfJp0qfpSliF1bkK9BCBY33MCcStped/+HQv4xIbRnSfdIvg3a0AFSlv9Kuq
+xlti71KNAgkBZ3ZAINK59BfWh7/NPC7UCLvcG6yIvjkUohjcrbM98uoJ32wK
+ug96y5NnrhLM/wpswLuHSR17ycirkcmCzIRvJq8=
+=ienU
 -----END PGP SIGNATURE-----
