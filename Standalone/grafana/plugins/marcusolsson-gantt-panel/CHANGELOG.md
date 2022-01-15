@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.5 (2022-01-07)
+
+[Full changelog](https://github.com/marcusolsson/grafana-gantt-panel/compare/v0.7.4...v0.7.5)
+
+### Bug fixes
+
+- `experiments` is undefined ([#69](https://github.com/marcusolsson/grafana-gantt-panel/issues/69)) (thanks [@prOOrc](https://github.com/pr00rc)!)
+
 ## 0.7.4 (2021-09-05)
 
 [Full changelog](https://github.com/marcusolsson/grafana-gantt-panel/compare/v0.7.3...v0.7.4)

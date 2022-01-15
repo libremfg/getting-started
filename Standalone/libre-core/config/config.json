@@ -5,25 +5,31 @@
     "loggers": [
       {"MAIN": {"topic":"MAIN"}},
       {"server": {"topic":"SERVER"}},
-      {"Influxdb" : {"topic": "Influxdb"}},
+      {"Influxdb" : {"topic": "Influxdb", "level": "ERROR"}},
+      {"edgeConnectorMQTT" : {"topic": "EDGE_CON", "level": "INFO"}},
+      {"edgeClient": {"topic":"EDGE_CLI", "level": "INFO"}},
       {"PubSubMQTT" : {"topic": "PubSubMQTT"}},
       {"PlcConnectorMQTT" : {"topic": "PLCMQTT"}},
       {"graphQLTrans" : {"topic": "GQLTRANS"}},
-      {"RESTAPI": {"topic":"RESTAPI"}},
-      {"DEFAULT": {"topic": "DEFAULT"}},
-      {"EquipmentManager": {"topic":"EQMGR"}},
-      {"ManagedEquipmentDaemon": {"topic":"MGDEQD"}},
-      {"PlcConnectorMQTT" : {"topic": "PLCMQTT"}},
-      {"tagChangeHandlerFactory" : {"topic": "THFACT"}},
-      {"managedEquipmentDefault" : {"topic": "MGDEQ"}},
       {"DATAGQL": {"topic":"DATAGQL"}},
       {"EQFINDR": {"topic":"EQFINDR"}},
       {"EQCACHE": {"topic":"EQCACHE"}},
-      {"calendarService": {"topic": "CALENDAR", "level": "INFO"}}
+      {"calendarService": {"topic": "CALENDAR", "level": "INFO"}},
+      {"ConfigSubscriber": {"topic":"CONFIG_SUB", "level": "INFO"}},
+      {"EdgeSubscriber": {"topic":"EDGE_SUB", "level": "INFO"}},
+      {"EquipmentHandler": {"topic":"EQHDLR", "level": "INFO"}},
+      {"PublishToHistorianHandler": {"topic":"PHHDLR", "level": "ERROR"}},
+      {"libreCore": {"topic":"CORE", "level": "DEBUG"}},
+      {"OperationsRequestHandler": {"topic":"OpsReqHdlr", "level": "DEBUG"}},
+      {"cacheConnectorMQTT": {"topic":"cacheConnMQTT", "level": "DEBUG"}},
+      {"": {"topic":"BLANK", "level": "INFO"}},
+      {"DEFAULT": {"topic":"DEFAULT", "level": "DEBUG"}},
+      {"MachineStateHandler": {"topic": "EVENTLOG", "level": "DEBUG"}}
     ]
   },
   "libreDataStoreGraphQL" : {
-    "GRAPHQL_URL": "http://alpha:8080/graphql"
+    "GRAPHQL_URL": "http://alpha:8080/graphql",
+    "LIBRE_DQL_URL": "dgraph-dgraph-alpha:9080"
   },
   "pubSubConnectorMQTT" : {
     "MQTT_SERVER":   "mqtt://mqtt:1883",
@@ -31,11 +37,32 @@
     "MQTT_PWD":      "public",
     "MQTT_SVC_NAME": "CoreServicePubSubConnector"
   },
+  "workflowEventsSubscriberMQTT" : {
+    "MQTT_SERVER":   "mqtt://mqtt:1883",
+    "MQTT_USER":     "admin",
+    "MQTT_PWD":      "public",
+    "MQTT_SVC_NAME": "CoreServiceWorkflowEventConnector"
+  },
+  "workflowCommandsSubscriberMQTT" : {
+    "MQTT_SERVER":   "mqtt://mqtt:1883",
+    "MQTT_USER":     "admin",
+    "MQTT_PWD":      "public",
+    "MQTT_SVC_NAME": "CoreServiceWorkflowCommandConnector"
+  },
   "edgeConnectorMQTT" : {
     "MQTT_SERVER":   "mqtt://mqtt:1883",
     "MQTT_USER":     "admin",
     "MQTT_PWD":      "public",
     "MQTT_SVC_NAME": "CoreServiceEdgeConnector",
+    "TOPIC_TEMPLATE": "<EQNAME>/<CATEGORY>/<TAGNAME>",
+    "TAG_DATA_CATEGORY": "EdgeTagChange",
+    "EVENT_CATEGORY": "EdgeEvent"
+  },
+  "cacheConnectorMQTT" : {
+    "MQTT_SERVER":   "mqtt://mqtt:1883",
+    "MQTT_USER":     "admin",
+    "MQTT_PWD":      "public",
+    "MQTT_SVC_NAME": "CoreServiceCacheConnector",
     "TOPIC_TEMPLATE": "<EQNAME>/<CATEGORY>/<TAGNAME>",
     "TAG_DATA_CATEGORY": "EdgeTagChange",
     "EVENT_CATEGORY": "EdgeEvent"
@@ -88,5 +115,11 @@
   },
   "RESTAPI": {
     "PORT" : "28080"
+  },
+  "libreCoreService": {
+    "GRAPHQL_PORT": 4002,
+    "LIBRE_DQL_URL": "alpha:9080",
+    "LIBRE_GRAPHQL_ENDPOINT": "http://alpha:8080/graphql",
+    "EQUIPMENT_CONFIG_TOPIC": "Libre/subscriptions/equipmentConfig/#"
   }
 }

@@ -75,5 +75,9 @@
   },
   "eventDefEvaluator": {
     "EventPayloadDelayMilliseconds": "5s"
+  },
+  "equipmentList": {
+    "nameList": [
+    ]
   }
 }
