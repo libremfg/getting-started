@@ -233,7 +233,7 @@ services:
         condition: service_healthy
     container_name: libre-edge-agent
   appsmith:
-    image: appsmith/appsmith-ce
+    image: appsmith/appsmith-ce:v1.6.6
     container_name: appsmith-ce
     environment:
       - APPSMITH_MAIL_ENABLED=true
