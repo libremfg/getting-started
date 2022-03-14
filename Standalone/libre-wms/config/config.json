@@ -1,0 +1,40 @@
+{
+  "libreLogger" : {
+    "defaultLevel": "DEBUG",
+    "defaultDestination": "CONSOLE",
+    "loggers": [
+      {"MAIN": {"topic":"MAIN"}},
+      {"server": {"topic":"SERVER"}},
+      {"Influxdb": {"topic":"INFLUX"}},
+      {"ReceiveInventory": {"topic":"RECINV"}},
+      {"Auspost": {"topic": "AUSPOST"}}
+    ]
+  },
+  "libreDataStoreGraphQL" : {
+    "GRAPHQL_URL": "http://alpha:8080/graphql",
+    "LIBRE_DQL_URL": "dgraph-dgraph-alpha:9080"
+  },
+  "shippingAuspostAdapter" : {
+    "BASE_URL": "https://digitalapi.auspost.com.au/test/shipping/v1"
+  },
+  "influxdb" : {
+    "loggerHook" : "Influxdb",
+    "serverURL" : "http://influxdb:8086",
+    "authToken" : "mytokenmytokenmytoken",
+    "org" : "Libre",
+    "bucket" : "Libre"
+  },
+  "inventoryTransactionsInfluxdb" : {
+    "loggerHook" : "Influxdb",
+    "serverURL" : "http://influxdb:8086",
+    "authToken" : "mytokenmytokenmytoken",
+    "org" : "Libre",
+    "bucket" : "LibreInventoryTransactions"
+  },
+  "pubSubConnectorMQTT" : {
+    "MQTT_SERVER":   "mqtt://mqtt:1883",
+    "MQTT_USER":     "admin",
+    "MQTT_PWD":      "public",
+    "MQTT_SVC_NAME": "WmsServicePubSubConnector"
+  }
+}

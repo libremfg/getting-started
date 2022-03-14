@@ -8,9 +8,9 @@
 version: "3.2"
 services:
   zero:
-    image: dgraph/dgraph:v21.03.1
-#    volumes:
-#      - ./zero/data:/dgraph
+    image: ghcr.io/spruik/dgraph:v21.03.3
+    volumes:
+      - ./zero/data:/dgraph
     ports:
       - 5080:5080
       - 6080:6080
@@ -18,9 +18,9 @@ services:
     command: dgraph zero --my=zero:5080
     container_name: zero
   alpha:
-    image: dgraph/dgraph:v21.03.1
-#    volumes:
-#      - ./alpha/data:/dgraph
+    image: ghcr.io/spruik/dgraph:v21.03.3
+    volumes:
+      - ./alpha/data:/dgraph
     ports:
       - 8080:8080
       - 9080:9080
@@ -40,7 +40,7 @@ services:
       - 8000:8000
     command: dgraph-ratel
   libre-ui:
-    image:  ghcr.io/spruik/libre-admin-ui:v0.2.1
+    image:  ghcr.io/spruik/libre-admin-ui:v0.5.2
     ports:
       - 80:80
     environment:
@@ -75,7 +75,7 @@ services:
       retries: 5
       test: ["CMD", "curl", "-f", "http://mqtt:18083"]
   libre-core:
-    image: ghcr.io/spruik/libre-core:0.3.8
+    image: ghcr.io/spruik/libre-core:0.5.0
     restart: always
     ports:
       - 4002:4002
@@ -89,6 +89,22 @@ services:
       - "zero"
       - "dgraph-init"
     container_name: libre-core
+
+  libre-wms:
+    image: ghcr.io/spruik/libre-wms:0.0.1
+    restart: always
+    ports:
+      - 7000:7000
+    environment:
+      - LIBRE_CONFIG_FILE=/etc/config/config.json
+    volumes:
+      - ./libre-wms/config:/etc/config
+    depends_on:
+      - "influxdb"
+      - "mqtt"
+      - "alpha"
+      - "dgraph-init"
+    container_name: libre-wms
   graphql-pubsub:
     image: ghcr.io/spruik/graphql-pubsub:0.0.5
     restart: always
@@ -207,7 +223,7 @@ services:
       - "alpha"
       - "influxdb"
   dgraph-init:
-    image: dgraph/dgraph:v21.03.1
+    image: dgraph/dgraph:v21.03.2
     volumes:
       - ./schema:/dgraph/schema
     command: >
@@ -218,7 +234,7 @@ services:
       alpha:
           condition: service_healthy
   libre-edge-agent:
-    image: ghcr.io/spruik/libre-edge-agent:0.4.0
+    image: ghcr.io/spruik/libre-edge-agent:0.5.0
     restart: always
     environment:
       - LIBRE_CONFIG_FILE=/etc/config/config.json

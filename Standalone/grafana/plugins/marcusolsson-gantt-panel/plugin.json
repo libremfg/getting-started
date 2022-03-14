@@ -21,13 +21,13 @@
       { "name": "Gantt (Dark)", "path": "img/dark.png" },
       { "name": "Gantt (Light)", "path": "img/light.png" }
     ],
-    "version": "0.7.5",
-    "updated": "2022-01-07"
+    "version": "0.8.0",
+    "updated": "2022-01-28"
   },
 
   "dependencies": {
-    "grafanaDependency": ">=7.3.0",
-    "grafanaVersion": "7.3.0",
+    "grafanaDependency": ">=8.1.0",
+    "grafanaVersion": "8.1.0",
     "plugins": []
   }
 }

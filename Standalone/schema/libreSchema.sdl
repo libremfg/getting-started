@@ -2,6 +2,18 @@
 # define our authorization model here
 ###########################################################################
 
+""" This is a demonstration of adding a new type to the Libre Platform data model """
+type DemoExtension{
+    """ The unique id in the data hub """
+    id:ID!
+    """ This flag allows soft deletes """
+    isActive:Boolean @search
+    """ Link to an existing type """
+    equipment: [Equipment]
+    """ example of a field with complex search """
+    stringField: String @search(by: [fulltext,hash])
+}
+
 type User  @key(fields:"id"){
     id:ID!
     username: String! @id
@@ -566,9 +578,9 @@ type OperationsRequest @withSubscription @key(fields:"id"){
     id:ID!
     isActive:Boolean @search
     code:String! @id
-    operationsType: WorkType!
-    plannedStartDateTime:DateTime
-    plannedEndDateTime:DateTime
+    operationsType: WorkType! @search
+    plannedStartDateTime:DateTime @search
+    plannedEndDateTime:DateTime @search
     priority:String
     operationsDefinition:OperationsDefinition!
     requestState:RequestState!
@@ -607,7 +619,7 @@ type OperationsDefinition @withSubscription @key(fields:"id"){
     material:MaterialDefinition @hasInverse(field:operationsDefinitions)
     version: String
     description: String
-    operationsType: WorkType!
+    operationsType: WorkType! @search
     hierarchyScope: String
     billOfMaterial: BillOfMaterial @hasInverse(field:operationsDefinition)
     segments: [OperationsSegment] @hasInverse(field:operationsDefinition)
@@ -833,6 +845,7 @@ type JobResponse @withSubscription @key(fields:"id"){
     personnelActual:[PersonnelActual] @hasInverse(field:jobResponse)
     equipmentActual:[EquipmentActual] @hasInverse(field:jobResponse)
     materialActual:[MaterialActual] @hasInverse(field:jobResponse)
+    properties:[Property] @hasInverse(field:jobResponse)
 }
 type PersonnelActual @withSubscription @key(fields:"id"){
     id:ID!
@@ -1018,6 +1031,7 @@ type Equipment @withSubscription @key(fields:"id") {
     shipments:[Shipment] @hasInverse(field:warehouse)
     shipmentItems:[ShipmentItem] @hasInverse(field:bin)
     orders:[Order] @hasInverse(field:warehouse)
+    stagedOrders: [Order] @hasInverse(field:site)
     events:[EventLog] @hasInverse(field:equipment)
     quantities:[QuantityLog] @hasInverse(field:equipment)
     allowAdhocWorklog:Boolean
@@ -1048,12 +1062,13 @@ type Equipment @withSubscription @key(fields:"id") {
     inflows:[EquipmentRelation] @hasInverse(field:to)
     outflows:[EquipmentRelation] @hasInverse(field:from)
 }
-type EquipmentRelation {
+type EquipmentRelation  @key(fields:"id") {
     id:ID!
     isActive:Boolean @search
     from:Equipment! @hasInverse(field:outflows)
     to:Equipment @hasInverse(field:inflows)
     type:EquipmentRelationshipType!
+    code: String @search(by: [hash])
 }
 enum EquipmentRelationshipType {
     PERMANENT
@@ -1196,8 +1211,10 @@ type Property @withSubscription @key(fields:"id"){
     isTestedBy:[TestSpecification]
     equipment:Equipment @hasInverse(field:properties)
     equipmentClass:EquipmentClass @hasInverse(field:properties)
+    materialClass:MaterialClass @hasInverse(field:properties)
     operationsRequest:OperationsRequest @hasInverse(field:properties)
     jobOrder:JobOrder @hasInverse(field:properties)
+    jobResponse:JobResponse @hasInverse(field:properties)
     propertyOverrides:[EquipmentPropertyOverride] @hasInverse(field:property)
     propertyNameAliases:[PropertyNameAlias] @hasInverse(field:property)
     eventTriggers:[EventDefinition] @hasInverse(field:triggerProperties)
@@ -1208,6 +1225,7 @@ enum PropertyType {
     BOUND
     CALCULATED
     REFERENCED
+    LIBRE
 }
 type EquipmentPropertyOverride @withSubscription @key(fields:"id"){
     id:ID!
@@ -1286,6 +1304,7 @@ enum MessageClass {
     OperationsRequestStart
     JobOrderStateChange
     JobOrderTransition
+    PropertyValueTransfer
 }
 
 enum MachineState {
@@ -1370,7 +1389,7 @@ type MaterialClass @withSubscription  @key(fields:"id"){
     isActive:Boolean @search
     code:String! @id
     description:String
-    properties:[Property]
+    properties:[Property] @hasInverse(field:materialClass)
     scheduleSortOrder:Int
     parent: MaterialClass @hasInverse(field:children)
     children: [MaterialClass] @hasInverse(field:parent)
@@ -1944,6 +1963,7 @@ type Delivery @key(fields:"id") {
     shipments: [Shipment]
     location: Equipment
     operator: User
+    partner: Partner
     transportCompany: TransportCompany
     transportCompanyDeliveryId: String
 }
@@ -1958,12 +1978,13 @@ type Order  @key(fields:"id"){
     customerOrderNumber:String @search(by: [hash, fulltext])
     customerReference:String
     deliveryTerms:IncoTerms
-    status:OrderStatus!
+    status:OrderStatus! @search(by: [hash])
     shipFromPartner:Partner
     shipToPartner:Partner
     invoiceFromPartner:Partner
     invoiceToPartner:Partner
     warehouse:Equipment @hasInverse(field:orders)
+    site:Equipment @hasInverse(field:stagedOrders)
     lines:[OrderLine] @hasInverse(field:order)
     shipments:[Shipment] @hasInverse(field:order)
     notes:String

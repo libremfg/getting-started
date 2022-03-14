@@ -7,29 +7,30 @@ Hash: SHA512
   "signatureType": "community",
   "signedByOrg": "marcusolsson",
   "signedByOrgName": "Marcus Olsson",
+  "rootUrls": [],
   "plugin": "marcusolsson-gantt-panel",
-  "version": "0.7.5",
-  "time": 1641552991497,
+  "version": "0.8.0",
+  "time": 1643363544315,
   "keyId": "7e4d0c6a708866e7",
   "files": {
-    "CHANGELOG.md": "bbc5ce985c5fd5d23af9a35675543e8fc43b408796b6ecca409e16c368f4333c",
-    "module.js.map": "330647eae34cd9e6b993fecaf4cc8316757f8bf84e839e289c7b21e02ce07f14",
-    "module.js": "4fa4e704d6e2621785cd4ded595f3f50f20399cb2524134c550480ff10da7d89",
     "img/light.png": "fcb10b8798a4f3b60b064d9e6eaf64e1221d1f161de985e73ce78d3802b24a36",
     "img/dark.png": "a99b6f7e1cdc1cf8a5b1d5558bed4ee9b2998063b2c0d8932bf76b20241fead4",
     "img/logo.svg": "360d6e805c3d99714c01ee23efbdbb84bd9c279471acec4d5bed0901a8488e22",
+    "plugin.json": "3d8c1ceb085d9fc1e6bd5549222bccf8350d7ad7fe89890c4bb2f8ea1f2ae03e",
+    "README.md": "0e03eee69e33703ac62e4ea70ad587231ea3dc05dea461f2123bb679af446f41",
+    "CHANGELOG.md": "c4b7cf5f9339696d95b27ff4e1299191256bfe825695d29ded20084f3ca4750f",
+    "module.js": "5b16b4c15f49c474072a7daf292b7070cdd6c0c3d87c7824b9c6f70a8e23c9b3",
     "LICENSE": "5ab170e6de9123e3d011f1cd05e8dc2586954c1e889aac499bf5d98dc83e2839",
-    "plugin.json": "447f276abdbd40e83609a4ec15e290321b61dda1033b3a3dfda8b773fce1a21e",
-    "README.md": "0e03eee69e33703ac62e4ea70ad587231ea3dc05dea461f2123bb679af446f41"
+    "module.js.map": "99c1ea5936c4aac4fb00aa6975d96a21433278b18f6f5dbb301c69a1d31132c3"
   }
 }
 -----BEGIN PGP SIGNATURE-----
 Version: OpenPGP.js v4.10.1
 Comment: https://openpgpjs.org
 
-wqAEARMKAAYFAmHYHF8ACgkQfk0ManCIZue3hAIIr8ZSCXvCRkETaM6z8rCw
-K2RGcAiE3DGGKSEc4h40OTlPa+fNi6OwIgoLzEJdvYsGSiSJKpGfHvcuceUC
-nk8FxxsCBjjfXa5RSzsk9LbVgEE1oozrnEjMzbrU6LUn6LMpb3jvHivfeHhf
-K6tPQ0kiehTwPvD5xoIG2xMGTd+tQMnf+Ydq
-=TDaD
+wqEEARMKAAYFAmHzvNgACgkQfk0ManCIZuea8QIJAYKcJtzyYu0eUIaX4g47
+Pr1tD+tkiqZLekcDlJJmYHOi0D9rCW8BgGki1JP6WMH/SFm9CNGx3rpRWnGm
+kjyKMMiaAgUZonBDFd9GYiLKSP0gso0sJQQ+0xFNcNKXxvHeO9kkVg24DYob
+iPEH697wq2K2D95XVjNznpPLRVbqSaHKO8zzcA==
+=Fvvf
 -----END PGP SIGNATURE-----
