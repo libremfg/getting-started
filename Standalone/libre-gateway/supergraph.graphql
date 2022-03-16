@@ -6263,7 +6263,7 @@ scalar join__FieldSet
 enum join__Graph {
   CORE @join__graph(name: "core" url: "http://localhost:4002/query")
   SCHEDULER @join__graph(name: "scheduler" url: "http://localhost:10001/query")
-  SCHEMA @join__graph(name: "schema" url: "http://localhost:8080/graphql")
+  SCHEMA @join__graph(name: "schema" url: "http://localhost:8087/graphql")
   WMS @join__graph(name: "wms" url: "http://localhost:7001/query")
 }
 
