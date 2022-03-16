@@ -16,7 +16,7 @@
     ]
   },
     "libreDataStoreGraphQL" : {
-    "GRAPHQL_URL": "http://alpha:8087/graphql"
+    "GRAPHQL_URL": "http://alpha:8080/graphql"
   },
   "pubSubConnectorMQTT" : {
     "MQTT_SERVER":   "mqtt://mqtt:1883",
@@ -25,7 +25,7 @@
     "MQTT_SVC_NAME": "GraphqlPubSub"
   },
   "GraphQLSubscriber": {
-    "GRAPHQL_URL": "http://alpha:8087/graphql"
+    "GRAPHQL_URL": "http://alpha:8080/graphql"
   },
   "SubscriptionHandler" : {
     "SUBSCRIPTIONS" : [

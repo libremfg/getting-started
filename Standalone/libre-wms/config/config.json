@@ -11,7 +11,7 @@
     ]
   },
   "libreDataStoreGraphQL" : {
-    "GRAPHQL_URL": "http://alpha:8087/graphql",
+    "GRAPHQL_URL": "http://alpha:8080/graphql",
     "LIBRE_DQL_URL": "dgraph-dgraph-alpha:9080"
   },
   "shippingAuspostAdapter" : {

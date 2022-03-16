@@ -28,7 +28,7 @@
     ]
   },
   "libreDataStoreGraphQL" : {
-    "GRAPHQL_URL": "http://alpha:8087/graphql",
+    "GRAPHQL_URL": "http://alpha:8080/graphql",
     "LIBRE_DQL_URL": "dgraph-dgraph-alpha:9080"
   },
   "pubSubConnectorMQTT" : {
@@ -68,7 +68,7 @@
     "EVENT_CATEGORY": "EdgeEvent"
   },
   "GraphQLSubscriber": {
-    "GRAPHQL_URL": "http://alpha:8087/graphql"
+    "GRAPHQL_URL": "http://alpha:8080/graphql"
   },
   "influxdb" : {
     "loggerHook" : "Influxdb",
@@ -119,7 +119,7 @@
   "libreCoreService": {
     "GRAPHQL_PORT": 4002,
     "LIBRE_DQL_URL": "alpha:9080",
-    "LIBRE_GRAPHQL_ENDPOINT": "http://alpha:8087/graphql",
+    "LIBRE_GRAPHQL_ENDPOINT": "http://alpha:8080/graphql",
     "EQUIPMENT_CONFIG_TOPIC": "Libre/subscriptions/equipmentConfig/#"
   }
 }

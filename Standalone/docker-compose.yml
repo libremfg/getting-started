@@ -22,7 +22,7 @@ services:
     volumes:
       - ./alpha/data:/dgraph
     ports:
-      - 8087:8087
+      - 8087:8080
       - 9080:9080
 #    env_file:
 #      - ACCESS_KEYS.txt
@@ -47,7 +47,7 @@ services:
       - AUTH0_DOMAIN=demo-libremfg.us.auth0.com
       - AUTH0_CLIENT_ID=cEye379jRD9TCroW6LRwsNf7LQkMYOBj
       - GRAPHQL_ENDPOINT=http://localhost:4000/graphql
-      - GRAPHQL_SUBSCRIPTION_ENDPOINT=ws://localhost:8087/graphql
+      - GRAPHQL_SUBSCRIPTION_ENDPOINT=ws://localhost:8080/graphql
       - MQTT_USERNAME=admin
       - MQTT_PASSWORD=public
       - MQTT_URL=localhost
@@ -227,7 +227,7 @@ services:
     volumes:
       - ./schema:/dgraph/schema
     command: >
-      sh -c "curl -X POST alpha:8087/admin/schema --data-binary '@./schema/libreSchema.sdl' &&
+      sh -c "curl -X POST alpha:8080/admin/schema --data-binary '@./schema/libreSchema.sdl' &&
              dgraph live -f ./schema/g01.rdf.gz -a alpha:9080 -z zero:5080"
     container_name: dgraph-init
     depends_on:
