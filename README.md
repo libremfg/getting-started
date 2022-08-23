@@ -43,3 +43,8 @@ If you would like to use Libre in a production environment, please get in touch 
   * Go to http://localhost
   * Create an account via auth0
   * Email support@libremfg.com to get your account authorised
+
+
+### Infrastructure model
+
+![Infrastructure model](.infragenie/infrastructure_model.png)
